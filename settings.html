@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الإعدادات</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .wrap { max-width: 900px; margin: 0 auto; padding: 16px 16px 60px; }
+  .head { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .head h1 { flex: 1; margin: 0; font-size: 1.35rem; }
+  h2 { font-size: 1.05rem; margin: 0 0 .9rem; }
+  section.card { margin-bottom: 1rem; }
+  .events { display: grid; gap: .5rem; }
+  .ev { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; border: 1.5px solid var(--line); border-radius: 12px; padding: .7rem .9rem; background: #fff; }
+  .ev.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .ev .t { flex: 1; min-width: 180px; cursor: pointer; }
+  .ev .t small { display: block; color: var(--muted); font-size: .82rem; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+  @media (max-width: 620px) { .row2 { grid-template-columns: 1fr; } }
+  .choice { display: grid; gap: .5rem; }
+  .choice label { display: flex; gap: .7rem; align-items: flex-start; border: 1.5px solid var(--line); border-radius: 12px; padding: .7rem .9rem; cursor: pointer; background: #fff; }
+  .choice label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+  .choice input { margin-top: .35em; accent-color: var(--accent); }
+  .choice small { display: block; color: var(--muted); }
+  .switch { display: flex; align-items: center; gap: .7em; cursor: pointer; padding: .4rem 0; }
+  .switch input { flex: none; width: 2.8em; height: 1.5em; appearance: none; background: #d6d0c4; border-radius: 99px; position: relative; cursor: pointer; transition: .2s; margin: 0; }
+  .switch input::after { content: ''; position: absolute; top: .17em; inset-inline-start: .17em; width: 1.16em; height: 1.16em; border-radius: 50%; background: #fff; transition: .2s; }
+  .switch input:checked { background: var(--accent); }
+  .switch input:checked::after { inset-inline-start: 1.47em; }
+  .switch small { display: block; color: var(--muted); }
+  input[type=color] { width: 56px; height: 44px; border: 1.5px solid var(--line); border-radius: 10px; padding: 3px; background: #fff; cursor: pointer; }
+  .colorrow { display: flex; gap: .6rem; align-items: center; }
+  .share { display: grid; grid-template-columns: auto 1fr; gap: 1.2rem; align-items: center; }
+  @media (max-width: 620px) { .share { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
+  #qr { background: #fff; padding: 10px; border-radius: 10px; border: 1px solid var(--line); }
+  #qr img, #qr canvas { width: 160px; height: 160px; display: block; }
+  .link { direction: ltr; text-align: left; font-family: ui-monospace, monospace; font-size: .85rem; background: #f1ede4; padding: .6em .8em; border-radius: 8px; overflow-wrap: anywhere; margin-bottom: .6rem; }
+  .btns { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .savebar { position: sticky; bottom: 0; background: var(--bg); padding: .8rem 0; display: flex; gap: .5rem; border-top: 1px solid var(--line); }
+</style>
+</head>
+<body>
+<div id="gate" hidden>
+  <form class="card">
+    <h1>الإعدادات</h1>
+    <label class="field"><input type="password" placeholder="رمز المنشّط" autocomplete="current-password" required></label>
+    <button class="btn" style="width:100%">دخول</button>
+  </form>
+</div>
+
+<div class="wrap">
+  <div class="head">
+    <h1>الإعدادات</h1>
+    <a class="btn sm ghost" href="moderator.html">لوحة المنشّط</a>
+    <a class="btn sm ghost" href="screen.html" target="_blank">شاشة العرض</a>
+  </div>
+
+  <section class="card">
+    <h2>الندوات</h2>
+    <p class="muted" style="margin-top:-.5rem;font-size:.9rem">الندوة <b>النشطة</b> هي التي يراها الحاضرون عند مسح الرمز.</p>
+    <div class="events" id="events"></div>
+    <button class="btn ghost" id="newEv" style="margin-top:.8rem">+ ندوة جديدة</button>
+  </section>
+
+  <form id="form" hidden>
+    <section class="card">
+      <h2>معلومات الندوة</h2>
+      <label class="field"><span>موضوع الندوة (العنوان)</span><input type="text" id="f_title" maxlength="150" required></label>
+      <label class="field"><span>سطر فرعي (الجهة المنظمة، المكان…)</span><input type="text" id="f_subtitle" maxlength="200"></label>
+      <div class="row2">
+        <label class="field"><span>التاريخ</span><input type="date" id="f_date"></label>
+        <label class="field"><span>أقصى طول للسؤال (حرفًا)</span><input type="number" id="f_max" min="50" max="1000" step="10"></label>
+      </div>
+      <label class="field"><span>المحاضرون (اسم في كل سطر — اتركه فارغًا إن لم ترد أن يختار الحاضر لمن يوجّه سؤاله)</span><textarea id="f_speakers" rows="3"></textarea></label>
+    </section>
+
+    <section class="card">
+      <h2>اسم السائل</h2>
+      <div class="choice">
+        <label><input type="radio" name="name_mode" value="optional"><span><b>يختار الحاضر</b><small>خانة الاسم اختيارية</small></span></label>
+        <label><input type="radio" name="name_mode" value="required"><span><b>بالاسم إجباريًا</b><small>لا يُقبل سؤال دون اسم</small></span></label>
+        <label><input type="radio" name="name_mode" value="anonymous"><span><b>دون اسم</b><small>لا تظهر خانة الاسم أصلًا</small></span></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>المراجعة وباب الأسئلة</h2>
+      <label class="switch"><input type="checkbox" id="f_mod"><span><b>مراجعة المنشّط قبل النشر</b><small>مفعّلة: يظهر السؤال بعد قبولك · معطّلة: يظهر مباشرة للجميع</small></span></label>
+      <label class="switch"><input type="checkbox" id="f_open"><span><b>باب الأسئلة مفتوح</b><small>عند الإغلاق يتصفّح الحاضرون ويعجبون فقط</small></span></label>
+    </section>
+
+    <section class="card">
+      <h2>المظهر</h2>
+      <label class="field"><span>اللون الرئيسي</span>
+        <div class="colorrow"><input type="color" id="f_accent"><span class="muted" id="accentHex"></span></div></label>
+      <label class="field"><span>رابط الشعار (مثلًا: assets/logo.png بعد رفعه مع الملفات، أو رابط صورة كامل)</span><input type="text" id="f_logo" dir="ltr" placeholder="assets/logo.png"></label>
+    </section>
+
+    <div class="savebar">
+      <button class="btn" id="saveBtn">حفظ التغييرات</button>
+      <button type="button" class="btn quiet" id="exportBtn">تصدير الأسئلة (Excel)</button>
+    </div>
+  </form>
+
+  <section class="card">
+    <h2>رابط الحاضرين ورمز QR</h2>
+    <div class="share">
+      <div id="qr"></div>
+      <div>
+        <div class="link" id="link"></div>
+        <div class="btns">
+          <button class="btn sm" id="copyLink">نسخ الرابط</button>
+          <button class="btn sm ghost" id="dlQr">تحميل رمز QR</button>
+        </div>
+        <p class="muted" style="font-size:.85rem">هذا الرابط ثابت لكل الندوات: يفتح دائمًا الندوة النشطة، فيمكنك طباعة الرمز مرة واحدة.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>تغيير رمز المنشّط</h2>
+    <form id="pinForm" class="row2">
+      <label class="field"><span>الرمز الجديد</span><input type="password" id="newPin" minlength="4" required autocomplete="new-password"></label>
+      <label class="field"><span>أعد كتابته</span><input type="password" id="newPin2" minlength="4" required autocomplete="new-password"></label>
+      <div><button class="btn sm">تغيير الرمز</button></div>
+    </form>
+  </section>
+</div>
+
+<script src="lib/qrcode.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+(() => {
+  const { rpc, esc, applyTheme, toast, formatDate, attendeeUrl, adminGate, session, drawQr, STATUS_LABEL } = Nadwa;
+  const $ = id => document.getElementById(id);
+  let pin, events = [], selId = null;
+
+  async function loadEvents() {
+    events = await rpc('admin_list_events', { p_pin: pin });
+    if (!selId || !events.find(e => e.id === selId)) selId = (events.find(e => e.is_active) || events[0] || {}).id;
+    renderEvents(); fillForm();
+  }
+
+  function renderEvents() {
+    $('events').innerHTML = events.map(e => `
+      <div class="ev${e.id === selId ? ' sel' : ''}">
+        <div class="t" data-sel="${e.id}"><b>${esc(e.title)}</b>
+          <small>${e.event_date ? formatDate(e.event_date) + ' · ' : ''}${e.count} سؤالًا</small></div>
+        ${e.is_active ? '<span class="badge">نشطة</span>' : `<button class="btn sm ghost" data-activate="${e.id}">تفعيل</button>`}
+        <button class="btn sm quiet" data-sel="${e.id}">تعديل</button>
+        <button class="btn sm quiet" data-export="${e.id}">تصدير</button>
+        ${e.is_active ? '' : `<button class="btn sm quiet" data-del="${e.id}" title="حذف">حذف</button>`}
+      </div>`).join('') || '<p class="muted">لا توجد ندوات بعد.</p>';
+  }
+
+  function fillForm() {
+    const e = events.find(x => x.id === selId);
+    $('form').hidden = !e; if (!e) return;
+    $('f_title').value = e.title; $('f_subtitle').value = e.subtitle;
+    $('f_date').value = e.event_date || ''; $('f_max').value = e.max_len;
+    $('f_speakers').value = (e.speakers || []).join('\n');
+    document.querySelector(`input[name=name_mode][value=${e.name_mode}]`).checked = true;
+    $('f_mod').checked = e.moderation; $('f_open').checked = e.is_open;
+    $('f_accent').value = /^#[0-9a-f]{6}$/i.test(e.accent) ? e.accent : '#0f766e';
+    $('accentHex').textContent = $('f_accent').value;
+    $('f_logo').value = e.logo_url;
+    applyTheme(e);
+  }
+
+  $('f_accent').oninput = e => { $('accentHex').textContent = e.target.value; document.documentElement.style.setProperty('--accent', e.target.value); };
+
+  $('form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    $('saveBtn').disabled = true;
+    try {
+      await rpc('admin_save_event', { p_pin: pin, p_event: selId, p_data: {
+        title: $('f_title').value, subtitle: $('f_subtitle').value, event_date: $('f_date').value,
+        max_len: +$('f_max').value || 300,
+        speakers: $('f_speakers').value.split('\n').map(s => s.trim()).filter(Boolean),
+        name_mode: document.querySelector('input[name=name_mode]:checked').value,
+        moderation: $('f_mod').checked, is_open: $('f_open').checked,
+        accent: $('f_accent').value, logo_url: $('f_logo').value.trim(),
+      }});
+      toast('تم الحفظ ✓', 'ok'); await loadEvents();
+    } catch (e) { toast(e.message, 'err'); }
+    finally { $('saveBtn').disabled = false; }
+  });
+
+  $('newEv').onclick = async () => {
+    try {
+      const e = await rpc('admin_save_event', { p_pin: pin, p_event: null, p_data: { title: 'ندوة جديدة' } });
+      selId = e.id; await loadEvents(); $('f_title').select(); $('f_title').focus();
+      toast('أُنشئت الندوة — عدّل معلوماتها ثم احفظ، وفعّلها حين يحين موعدها');
+    } catch (e) { toast(e.message, 'err'); }
+  };
+
+  document.addEventListener('click', async e => {
+    const t = e.target.closest('[data-sel],[data-activate],[data-export],[data-del]'); if (!t) return;
+    try {
+      if (t.dataset.sel) { selId = t.dataset.sel; renderEvents(); fillForm(); $('form').scrollIntoView({ behavior: 'smooth' }); }
+      if (t.dataset.activate) { await rpc('admin_set_active', { p_pin: pin, p_event: t.dataset.activate }); toast('أصبحت هذه الندوة نشطة', 'ok'); await loadEvents(); }
+      if (t.dataset.export) await exportCsv(t.dataset.export);
+      if (t.dataset.del) {
+        const ev = events.find(x => x.id === t.dataset.del);
+        if (!confirm(`حذف ندوة «${ev.title}» وكل أسئلتها (${ev.count}) نهائيًا؟ صدّر الأسئلة أولًا إن كنت تحتاجها.`)) return;
+        await rpc('admin_delete_event', { p_pin: pin, p_event: ev.id }); toast('حُذفت'); await loadEvents();
+      }
+    } catch (err) { toast(err.message, 'err'); }
+  });
+
+  $('exportBtn').onclick = () => exportCsv(selId).catch(e => toast(e.message, 'err'));
+
+  // تصدير CSV يفتح في Excel بالعربية (UTF-8 مع BOM)
+  async function exportCsv(id) {
+    const d = await rpc('admin_list_questions', { p_pin: pin, p_event: id });
+    const fmt = t => t ? new Date(t).toLocaleString('fr-FR') : '';
+    const cell = v => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const rows = [['الترتيب', 'السؤال', 'الاسم', 'موجّه إلى', 'الحالة', 'الإعجابات', 'وقت الطرح', 'وقت الإجابة']];
+    d.questions.slice().sort((a, b) => b.likes - a.likes)
+      .forEach((q, i) => rows.push([i + 1, q.body, q.author, q.target, STATUS_LABEL[q.status], q.likes, fmt(q.created_at), fmt(q.answered_at)]));
+    const csv = '﻿' + rows.map(r => r.map(cell).join(',')).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = `أسئلة - ${d.event.title} - ${d.event.event_date || ''}.csv`.replace(/[\\/:*?"<>|]/g, '-');
+    document.body.appendChild(a); a.click(); a.remove();
+    toast(`صُدّر ${d.questions.length} سؤالًا`, 'ok');
+  }
+
+  $('pinForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    if ($('newPin').value !== $('newPin2').value) return toast('الرمزان غير متطابقين', 'err');
+    try {
+      await rpc('admin_change_pin', { p_pin: pin, p_new: $('newPin').value });
+      pin = $('newPin').value; session.set('nadwa_pin', pin); e.target.reset(); toast('تم تغيير الرمز ✓', 'ok');
+    } catch (err) { toast(err.message, 'err'); }
+  });
+
+  // الرابط ورمز QR
+  const url = attendeeUrl();
+  $('link').textContent = url;
+  drawQr($('qr'), url, 1000);
+  $('copyLink').onclick = () => navigator.clipboard.writeText(url).then(() => toast('نُسخ الرابط', 'ok'), () => toast(url));
+  $('dlQr').onclick = () => {
+    const c = $('qr').querySelector('canvas'); if (!c) return;
+    const a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'qr-nadwa.png'; a.click();
+  };
+
+  adminGate(p => { pin = p; loadEvents().catch(e => toast(e.message, 'err')); });
+})();
+</script>
+</body>
+</html>

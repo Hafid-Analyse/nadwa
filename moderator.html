@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة المنشّط</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .head { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+  .head h1 { font-size: 1.2rem; margin: 0; flex: 1; min-width: 200px; }
+  .head h1 small { display: block; font-size: .8rem; color: var(--muted); font-weight: 400; }
+  .switch { display: inline-flex; align-items: center; gap: .5em; font-size: .9rem; font-weight: 600; cursor: pointer; }
+  .switch input { width: 2.6em; height: 1.4em; appearance: none; background: #d6d0c4; border-radius: 99px; position: relative; cursor: pointer; transition: .2s; margin: 0; }
+  .switch input::after { content: ''; position: absolute; top: .15em; inset-inline-start: .15em; width: 1.1em; height: 1.1em; border-radius: 50%; background: #fff; transition: .2s; }
+  .switch input:checked { background: var(--accent); }
+  .switch input:checked::after { inset-inline-start: 1.35em; }
+  .spotbar { background: var(--accent); color: #fff; border-radius: var(--radius); padding: .8rem 1rem; display: flex; gap: .8rem; align-items: center; margin-bottom: 1rem; }
+  .spotbar .t { flex: 1; font-weight: 600; }
+  .spotbar small { display: block; opacity: .8; font-weight: 400; font-size: .8rem; }
+  .tabs { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: 1rem; position: sticky; top: 0; background: var(--bg); padding: .5rem 0; z-index: 5; }
+  .tabs button { border: 1.5px solid var(--line); background: #fff; border-radius: 99px; padding: .45em 1em; cursor: pointer; font-weight: 600; color: var(--muted); }
+  .tabs button[aria-selected=true] { border-color: var(--accent); background: var(--accent); color: #fff; }
+  .tabs .c { display: inline-block; min-width: 1.6em; padding: 0 .4em; border-radius: 99px; background: rgb(0 0 0 / .08); font-size: .8rem; margin-inline-start: .3em; }
+  .tabs [data-tab=pending] .c.hot { background: var(--warn); color: #fff; }
+  #list { display: grid; gap: .6rem; }
+  .q .actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+  .q .likes { flex: none; text-align: center; min-width: 56px; font-weight: 700; color: var(--accent); font-size: 1.2rem; }
+  .q .likes small { display: block; font-size: .7rem; color: var(--muted); font-weight: 400; }
+  .q.spotlit { box-shadow: inset 0 0 0 2px var(--accent); }
+  .empty { text-align: center; color: var(--muted); padding: 3rem 0; }
+  .links { display: flex; gap: .4rem; }
+</style>
+</head>
+<body>
+<div id="gate" hidden>
+  <form class="card">
+    <h1>لوحة المنشّط</h1>
+    <label class="field"><input type="password" placeholder="رمز المنشّط" autocomplete="current-password" required></label>
+    <button class="btn" style="width:100%">دخول</button>
+  </form>
+</div>
+
+<div class="wrap">
+  <div class="head">
+    <h1 id="title">…<small></small></h1>
+    <label class="switch"><input type="checkbox" id="openToggle"> باب الأسئلة مفتوح</label>
+    <div class="links">
+      <a class="btn sm ghost" href="screen.html" target="_blank">شاشة العرض</a>
+      <a class="btn sm ghost" href="settings.html">الإعدادات</a>
+    </div>
+  </div>
+
+  <div class="spotbar" id="spotbar" hidden>
+    <div class="t" id="spotText"></div>
+    <button class="btn sm quiet" id="spotDone">تمت الإجابة</button>
+    <button class="btn sm quiet" id="spotClear">إزالة من الشاشة</button>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button data-tab="pending" aria-selected="true">بانتظار المراجعة<span class="c">0</span></button>
+    <button data-tab="approved" aria-selected="false">المعروضة<span class="c">0</span></button>
+    <button data-tab="answered" aria-selected="false">تمت الإجابة<span class="c">0</span></button>
+    <button data-tab="hidden" aria-selected="false">المخفية<span class="c">0</span></button>
+  </div>
+  <div id="list"></div>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+(() => {
+  const { rpc, esc, applyTheme, toast, flip, adminGate, C } = Nadwa;
+  const $ = id => document.getElementById(id);
+  let pin, ev, qs = [], tab = 'pending', timer, firstLoad = true, busy = false;
+  const params = new URLSearchParams(location.search);
+
+  const ACTIONS = {
+    pending:  [['approved', 'قبول', ''], ['spot', 'قبول وعرض الآن', 'ghost'], ['hidden', 'إخفاء', 'quiet']],
+    approved: [['spot', 'عرض على الشاشة', ''], ['answered', 'تمت الإجابة', 'ghost'], ['hidden', 'إخفاء', 'quiet']],
+    answered: [['approved', 'إعادة للعرض', 'quiet']],
+    hidden:   [['approved', 'استعادة ونشر', 'quiet'], ['pending', 'إرجاع للمراجعة', 'quiet']],
+  };
+
+  function fmtTime(t) { try { return new Date(t).toLocaleTimeString('ar-DZ-u-nu-latn', { hour: '2-digit', minute: '2-digit' }); } catch (_) { return ''; } }
+
+  function render() {
+    const counts = { pending: 0, approved: 0, answered: 0, hidden: 0 };
+    qs.forEach(q => counts[q.status]++);
+    document.querySelectorAll('[data-tab]').forEach(b => {
+      const c = b.querySelector('.c'); c.textContent = counts[b.dataset.tab];
+      if (b.dataset.tab === 'pending') c.classList.toggle('hot', counts.pending > 0);
+    });
+    document.title = (counts.pending ? `(${counts.pending}) ` : '') + 'لوحة المنشّط';
+
+    const spot = qs.find(q => ev && q.id === ev.spotlight_id);
+    $('spotbar').hidden = !spot;
+    if (spot) $('spotText').innerHTML = esc(spot.body) + `<small>معروض الآن على الشاشة · ${spot.likes} إعجاب</small>`;
+
+    let rows = qs.filter(q => q.status === tab);
+    if (tab === 'approved') rows.sort((a, b) => b.likes - a.likes);
+    else if (tab === 'answered') rows.sort((a, b) => (b.answered_at || '').localeCompare(a.answered_at || ''));
+    else rows.sort((a, b) => a.created_at.localeCompare(b.created_at));
+
+    flip($('list'), () => {
+      $('list').innerHTML = rows.length ? rows.map(q => `
+        <article class="q${ev && q.id === ev.spotlight_id ? ' spotlit' : ''}" data-id="${q.id}">
+          <div class="body">${esc(q.body)}
+            <div class="meta"><span>${q.author ? esc(q.author) : 'بدون اسم'}</span>${q.target ? `<span>إلى: ${esc(q.target)}</span>` : ''}<span>${fmtTime(q.created_at)}</span></div>
+            <div class="actions">${ACTIONS[q.status].map(([a, label, cls]) =>
+              `<button class="btn sm ${cls}" data-act="${a}" data-q="${q.id}">${label}</button>`).join('')}</div>
+          </div>
+          <div class="likes">${q.likes}<small>إعجاب</small></div>
+        </article>`).join('') : '<p class="empty">لا توجد أسئلة هنا</p>';
+    });
+  }
+
+  async function load() {
+    clearTimeout(timer);
+    try {
+      if (!ev) {
+        const evs = await rpc('admin_list_events', { p_pin: pin });
+        const want = params.get('e');
+        ev = evs.find(e => e.id === want) || evs.find(e => e.is_active) || evs[0];
+        if (!ev) { $('title').firstChild.textContent = 'لا توجد ندوة — أنشئها من الإعدادات'; return; }
+      }
+      const d = await rpc('admin_list_questions', { p_pin: pin, p_event: ev.id });
+      ev = d.event; qs = d.questions;
+      $('title').firstChild.textContent = ev.title;
+      $('title').querySelector('small').textContent = ev.moderation ? 'المراجعة مفعّلة: الأسئلة تنتظر قبولك' : 'المراجعة معطّلة: الأسئلة تُنشر مباشرة';
+      $('openToggle').checked = ev.is_open;
+      applyTheme(ev);
+      if (firstLoad && !ev.moderation) { setTab('approved'); }
+      firstLoad = false;
+      if (!busy) render();
+    } catch (e) {
+      if (e.pin) { Nadwa.session.del('nadwa_pin'); location.reload(); return; }
+      toast(e.message, 'err');
+    } finally { timer = setTimeout(load, C.REFRESH_MODERATOR_SEC * 1000); }
+  }
+
+  function setTab(t) {
+    tab = t;
+    document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
+    render();
+  }
+  document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+
+  async function act(a, id) {
+    busy = true;
+    try {
+      if (a === 'spot') {
+        await rpc('admin_spotlight', { p_pin: pin, p_event: ev.id, p_question: id });
+        ev.spotlight_id = id;
+        const q = qs.find(x => x.id === id); if (q && q.status === 'pending') q.status = 'approved';
+        toast('معروض الآن على الشاشة', 'ok');
+      } else {
+        await rpc('admin_set_status', { p_pin: pin, p_question: id, p_status: a });
+        const q = qs.find(x => x.id === id);
+        if (q) { q.status = a; if (a === 'answered') q.answered_at = new Date().toISOString(); }
+        if (['hidden', 'pending'].includes(a) && ev.spotlight_id === id) ev.spotlight_id = null;
+      }
+    } catch (e) { toast(e.message, 'err'); }
+    finally { busy = false; render(); }
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if (b) { b.disabled = true; act(b.dataset.act, b.dataset.q); }
+  });
+
+  $('spotClear').onclick = async () => {
+    try { await rpc('admin_spotlight', { p_pin: pin, p_event: ev.id, p_question: null }); ev.spotlight_id = null; render(); }
+    catch (e) { toast(e.message, 'err'); }
+  };
+  $('spotDone').onclick = async () => {
+    const id = ev.spotlight_id; if (!id) return;
+    await act('answered', id);
+    try { await rpc('admin_spotlight', { p_pin: pin, p_event: ev.id, p_question: null }); ev.spotlight_id = null; render(); } catch (_) {}
+  };
+  $('openToggle').onchange = async e => {
+    try {
+      ev = await rpc('admin_save_event', { p_pin: pin, p_event: ev.id, p_data: { is_open: e.target.checked } });
+      toast(ev.is_open ? 'فُتح باب الأسئلة' : 'أُغلق باب الأسئلة', 'ok');
+    } catch (err) { e.target.checked = !e.target.checked; toast(err.message, 'err'); }
+  };
+
+  adminGate(p => { pin = p; load(); });
+})();
+</script>
+</body>
+</html>

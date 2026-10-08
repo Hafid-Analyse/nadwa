@@ -1,0 +1,147 @@
+// دوال مشتركة بين كل الصفحات
+(function () {
+  const C = window.NADWA_CONFIG;
+
+  // استدعاء دالة في Supabase
+  async function rpc(fn, args) {
+    const headers = { 'Content-Type': 'application/json', apikey: C.SUPABASE_KEY };
+    // المفتاح القديم (anon JWT) يُرسل أيضًا في Authorization؛ المفتاح الجديد sb_publishable لا
+    if (C.SUPABASE_KEY.startsWith('eyJ')) headers.Authorization = 'Bearer ' + C.SUPABASE_KEY;
+    let res;
+    try {
+      res = await fetch(C.SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/rpc/' + fn, {
+        method: 'POST', headers, body: JSON.stringify(args || {}),
+      });
+    } catch (e) {
+      throw new Error('تعذّر الاتصال، تحقق من الإنترنت');
+    }
+    const text = await res.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch (_) { data = text; }
+    if (!res.ok) {
+      const msg = (data && data.message) || 'حدث خطأ، أعد المحاولة';
+      const err = new Error(msg); err.status = res.status; throw err;
+    }
+    // دوال المنشّط تُرجع {error: "..."} عند خطأ الرمز
+    if (data && !Array.isArray(data) && typeof data === 'object' && data.error) {
+      const err = new Error(data.error); err.pin = true; throw err;
+    }
+    return data;
+  }
+
+  // معرّف ثابت لكل جهاز (لمنع الإعجاب المكرر)
+  function deviceId() {
+    let id = store.get('nadwa_device');
+    if (!id) {
+      id = (crypto.randomUUID ? crypto.randomUUID()
+        : Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2));
+      store.set('nadwa_device', id);
+    }
+    return id;
+  }
+
+  // تخزين محلي آمن (لا ينكسر إن كان معطّلًا)
+  const mem = {};
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (_) { return mem[k] ?? null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (_) { mem[k] = v; } },
+    del(k) { try { localStorage.removeItem(k); } catch (_) { delete mem[k]; } },
+  };
+  const session = {
+    get(k) { try { return sessionStorage.getItem(k); } catch (_) { return mem['s_' + k] ?? null; } },
+    set(k, v) { try { sessionStorage.setItem(k, v); } catch (_) { mem['s_' + k] = v; } },
+    del(k) { try { sessionStorage.removeItem(k); } catch (_) { delete mem['s_' + k]; } },
+  };
+
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // تطبيق لون الندوة والشعار
+  function applyTheme(ev) {
+    if (!ev) return;
+    if (/^#[0-9a-f]{3,8}$/i.test(ev.accent || '')) document.documentElement.style.setProperty('--accent', ev.accent);
+    document.querySelectorAll('[data-logo]').forEach(img => {
+      if (ev.logo_url) { img.src = ev.logo_url; img.hidden = false; } else img.hidden = true;
+    });
+  }
+
+  function formatDate(d) {
+    if (!d) return '';
+    try {
+      return new Date(d + 'T12:00:00').toLocaleDateString('ar-DZ-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    } catch (_) { return d; }
+  }
+
+  let toastTimer;
+  function toast(msg, kind) {
+    let t = document.getElementById('toast');
+    if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    t.textContent = msg; t.className = 'show ' + (kind || '');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.className = ''), 3200);
+  }
+
+  // رابط صفحة الحاضرين (نفس المجلد)
+  function attendeeUrl() {
+    const u = new URL('./', location.href);
+    return u.href;
+  }
+
+  // تحريك ناعم عند تغيّر ترتيب العناصر (FLIP)
+  function flip(container, renderFn) {
+    const before = new Map();
+    container.querySelectorAll('[data-id]').forEach(el => before.set(el.dataset.id, el.getBoundingClientRect().top));
+    renderFn();
+    container.querySelectorAll('[data-id]').forEach(el => {
+      const old = before.get(el.dataset.id);
+      if (old === undefined) { el.classList.add('enter'); return; }
+      const dy = old - el.getBoundingClientRect().top;
+      if (Math.abs(dy) > 2) {
+        el.style.transform = `translateY(${dy}px)`; el.style.transition = 'none';
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          el.style.transition = 'transform .5s cubic-bezier(.2,.8,.2,1)'; el.style.transform = '';
+        }));
+      }
+    });
+  }
+
+  // تسجيل دخول المنشّط (الرمز يبقى في هذه النافذة فقط)
+  function adminGate(onReady) {
+    const gate = document.getElementById('gate');
+    const form = gate.querySelector('form');
+    const input = gate.querySelector('input');
+    async function tryPin(pin, silent) {
+      try {
+        await rpc('admin_login', { p_pin: pin });
+        session.set('nadwa_pin', pin);
+        gate.hidden = true;
+        onReady(pin);
+      } catch (e) {
+        session.del('nadwa_pin');
+        gate.hidden = false;
+        if (!silent) toast(e.message, 'err');
+      }
+    }
+    form.addEventListener('submit', ev => { ev.preventDefault(); tryPin(input.value.trim(), false); });
+    const saved = session.get('nadwa_pin');
+    if (saved) tryPin(saved, true); else { gate.hidden = false; input.focus(); }
+  }
+
+  // رسم رمز QR داخل عنصر (يعمل دون إنترنت خارجي — المكتبة في lib/qrcode.js)
+  function drawQr(el, text, px) {
+    if (!window.qrcode) return null;
+    const qr = window.qrcode(0, 'M'); qr.addData(text); qr.make();
+    const n = qr.getModuleCount(), margin = 2, scale = Math.max(4, Math.floor(px / (n + margin * 2)));
+    const size = (n + margin * 2) * scale;
+    const c = document.createElement('canvas'); c.width = c.height = size;
+    const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, size, size); g.fillStyle = '#000';
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++)
+      if (qr.isDark(r, k)) g.fillRect((k + margin) * scale, (r + margin) * scale, scale, scale);
+    el.innerHTML = ''; el.appendChild(c);
+    return c;
+  }
+
+  const STATUS_LABEL = { pending: 'بانتظار المراجعة', approved: 'معروض', answered: 'تمت الإجابة', hidden: 'مخفي' };
+
+  window.Nadwa = { rpc, drawQr, deviceId, store, session, esc, applyTheme, formatDate, toast, attendeeUrl, flip, adminGate, STATUS_LABEL, C };
+})();
