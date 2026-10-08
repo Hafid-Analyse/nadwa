@@ -5,40 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>لوحة المنشّط</title>
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b1418">
+<script>try{var t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('nadwa_theme');if(t==='auto')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="icon" type="image/svg+xml" href="assets/istiqama-emblem.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  .wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
-  .head { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-bottom: 1rem; }
-  .head h1 { font-size: 1.2rem; margin: 0; flex: 1; min-width: 200px; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 18px 16px 40px; }
+  .head { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; margin-bottom: 1.1rem; }
+  .head .logo { height: 40px; }
+  .head h1 { font-size: 1.25rem; margin: 0; flex: 1; min-width: 200px; font-weight: 800; }
   .head h1 small { display: block; font-size: .8rem; color: var(--muted); font-weight: 400; }
-  .switch { display: inline-flex; align-items: center; gap: .5em; font-size: .9rem; font-weight: 600; cursor: pointer; }
-  .switch input { width: 2.6em; height: 1.4em; appearance: none; background: #d6d0c4; border-radius: 99px; position: relative; cursor: pointer; transition: .2s; margin: 0; }
-  .switch input::after { content: ''; position: absolute; top: .15em; inset-inline-start: .15em; width: 1.1em; height: 1.1em; border-radius: 50%; background: #fff; transition: .2s; }
-  .switch input:checked { background: var(--accent); }
-  .switch input:checked::after { inset-inline-start: 1.35em; }
-  .spotbar { background: var(--accent); color: #fff; border-radius: var(--radius); padding: .8rem 1rem; display: flex; gap: .8rem; align-items: center; margin-bottom: 1rem; }
-  .spotbar .t { flex: 1; font-weight: 600; }
-  .spotbar small { display: block; opacity: .8; font-weight: 400; font-size: .8rem; }
-  .tabs { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: 1rem; position: sticky; top: 0; background: var(--bg); padding: .5rem 0; z-index: 5; }
-  .tabs button { border: 1.5px solid var(--line); background: #fff; border-radius: 99px; padding: .45em 1em; cursor: pointer; font-weight: 600; color: var(--muted); }
-  .tabs button[aria-selected=true] { border-color: var(--accent); background: var(--accent); color: #fff; }
-  .tabs .c { display: inline-block; min-width: 1.6em; padding: 0 .4em; border-radius: 99px; background: rgb(0 0 0 / .08); font-size: .8rem; margin-inline-start: .3em; }
-  .tabs [data-tab=pending] .c.hot { background: var(--warn); color: #fff; }
-  #list { display: grid; gap: .6rem; }
-  .q .actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
-  .q .likes { flex: none; text-align: center; min-width: 56px; font-weight: 700; color: var(--accent); font-size: 1.2rem; }
+  .switch { display: inline-flex; align-items: center; gap: .5em; font-size: .9rem; font-weight: 700; cursor: pointer; }
+  .spotbar { background: var(--grad); color: var(--on-accent);
+    border-radius: 20px; padding: .9rem 1.1rem; display: flex; gap: .8rem; align-items: center; margin-bottom: 1rem; box-shadow: 0 10px 28px var(--glow); }
+  .spotbar .t { flex: 1; font-weight: 800; }
+  .spotbar small { display: block; opacity: .75; font-weight: 700; font-size: .8rem; }
+  .spotbar .btn.quiet { background: rgba(0,0,0,.15); color: var(--on-accent); border-color: rgba(0,0,0,.15); }
+  .tabs { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; position: sticky; top: 0; padding: .6rem 0; z-index: 5;
+    background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .tabs button { border: 1px solid var(--chip-line); background: var(--chip); border-radius: 99px; padding: .45em 1.05em; cursor: pointer; font-weight: 700; color: var(--chip-ink); transition: .15s; }
+  .tabs button[aria-selected=true] { background: var(--grad); color: var(--on-accent); border-color: transparent; box-shadow: 0 4px 14px var(--glow); }
+  .tabs .c { display: inline-block; min-width: 1.6em; padding: 0 .4em; border-radius: 99px; background: color-mix(in srgb, var(--ink) 12%, transparent); font-size: .8rem; margin-inline-start: .35em; text-align: center; }
+  .tabs [data-tab=pending] .c.hot { background: var(--amber); color: #2A1C15; }
+  #list { display: grid; gap: .7rem; }
+  .q .actions { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .7rem; }
+  .q .likes { flex: none; text-align: center; min-width: 58px; font-weight: 800; color: var(--accent); font-size: 1.3rem; }
   .q .likes small { display: block; font-size: .7rem; color: var(--muted); font-weight: 400; }
-  .q.spotlit { box-shadow: inset 0 0 0 2px var(--accent); }
+  .q.spotlit { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 6px 24px var(--glow); }
   .empty { text-align: center; color: var(--muted); padding: 3rem 0; }
-  .links { display: flex; gap: .4rem; }
+  .links { display: flex; gap: .45rem; align-items: center; }
+  .links .theme-btn { width: 36px; height: 36px; }
 </style>
 </head>
 <body>
+<div class="orbs"><span class="w o1"></span><span class="d o2"></span><span class="d o4"></span></div>
 <div id="gate" hidden>
   <form class="card">
+    <img class="logo" data-logo alt="">
     <h1>لوحة المنشّط</h1>
     <label class="field"><input type="password" placeholder="رمز المنشّط" autocomplete="current-password" required></label>
     <button class="btn" style="width:100%">دخول</button>
@@ -47,9 +53,11 @@
 
 <div class="wrap">
   <div class="head">
+    <img class="logo" data-logo alt="" hidden>
     <h1 id="title">…<small></small></h1>
     <label class="switch"><input type="checkbox" id="openToggle"> باب الأسئلة مفتوح</label>
     <div class="links">
+      <span id="themeSlot"></span>
       <a class="btn sm ghost" href="screen.html" target="_blank">شاشة العرض</a>
       <a class="btn sm ghost" href="settings.html">الإعدادات</a>
     </div>
@@ -187,6 +195,7 @@
     } catch (err) { e.target.checked = !e.target.checked; toast(err.message, 'err'); }
   };
 
+  $('themeSlot').appendChild(Nadwa.themeButton());
   adminGate(p => { pin = p; load(); });
 })();
 </script>

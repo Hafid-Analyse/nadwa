@@ -4,59 +4,109 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>أسئلة الندوة</title>
-<meta name="theme-color" content="#0f766e">
+<meta name="theme-color" content="#0b1418">
+<script>try{var t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('nadwa_theme');if(t==='auto')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="icon" type="image/svg+xml" href="assets/istiqama-emblem.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px 90px; }
-  header.top {
-    background: var(--accent); color: #fff; padding: 22px 16px 54px; text-align: center;
-    border-radius: 0 0 26px 26px;
-  }
-  header.top img { height: 52px; margin-bottom: 8px; }
-  header.top h1 { margin: 0; font-size: 1.35rem; line-height: 1.4; }
-  header.top p { margin: .3rem 0 0; opacity: .88; font-size: .92rem; }
-  .ask { margin-top: -36px; box-shadow: 0 8px 24px rgb(0 0 0 / .07); }
-  .ask h2 { font-size: 1.05rem; margin: 0 0 .7rem; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 18px 16px 30px; }
+  /* البطاقة الرئيسية */
+  .hero { position: relative; overflow: hidden; padding: 22px 20px 20px; }
+  .hero::after { content: ''; position: absolute; inset-inline-end: -40px; top: -40px; width: 170px; height: 170px; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--amber) 16%, transparent), transparent 70%); pointer-events: none; }
+  .hero-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .hero .logo { height: 44px; }
+  .hero h1 { margin: 0; font-size: 25px; line-height: 1.4; font-weight: 800; }
+  .hero .rule { margin: 12px 0 14px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .fact { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink2); background: var(--chip); border: 1px solid var(--chip-line); padding: 4px 11px; border-radius: 99px; }
+  .fact svg { width: 15px; height: 15px; color: var(--accent); flex: none; }
+  .speakers { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--card-line); }
+  .speakers .lbl { display: block; font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 700; }
+  .speakers .list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .spk { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 700; padding: 3px 12px 3px 4px; border-radius: 99px; background: var(--chip); border: 1px solid var(--chip-line); }
+  .spk .av { width: 26px; height: 26px; font-size: 12px; }
+  /* الخطوات */
+  .steps { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .steps li { text-align: center; font-size: 12px; color: var(--muted); padding: 12px 6px 10px; border-radius: 16px; background: var(--card); border: 1px solid var(--card-line); }
+  .steps .n { display: grid; place-items: center; width: 34px; height: 34px; margin: 0 auto 6px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-line); }
+  .steps .n svg { width: 18px; height: 18px; }
+  .steps b { display: block; color: var(--ink); font-size: 13px; }
+  /* نموذج السؤال */
+  .ask { margin-top: 14px; }
+  .ask h2 { font-size: 1.12rem; margin: 0 0 .9rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .ask h2 svg { width: 20px; height: 20px; color: var(--accent); }
   .counter { font-size: .8rem; color: var(--muted); text-align: start; margin-top: -.6rem; margin-bottom: .8rem; }
   .counter.over { color: var(--danger); }
-  .closed { text-align: center; padding: 1.4rem 1rem; }
-  .sent { background: color-mix(in srgb, var(--ok) 10%, #fff); border-color: color-mix(in srgb, var(--ok) 35%, #fff); margin-top: .8rem; }
-  .bar { display: flex; align-items: center; gap: .5rem; margin: 1.6rem 0 .8rem; }
-  .tabs { display: flex; background: #ebe6db; border-radius: 10px; padding: 3px; flex: 1; }
-  .tabs button { flex: 1; border: 0; background: none; padding: .5em; border-radius: 8px; cursor: pointer; font-weight: 600; color: var(--muted); }
-  .tabs button[aria-selected=true] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / .08); }
-  .refresh { width: 44px; height: 44px; border-radius: 10px; border: 0; background: #ebe6db; cursor: pointer; display: grid; place-items: center; }
+  .closed { text-align: center; padding: .6rem; }
+  .closed .ico { width: 56px; height: 56px; margin: 0 auto; border-radius: 18px; display: grid; place-items: center; background: color-mix(in srgb, var(--amber) 12%, transparent); color: var(--amber-ink); }
+  .closed .ico svg { width: 26px; height: 26px; }
+  .sent { margin-top: .9rem; padding: 12px; border-radius: 16px; font-weight: 700; text-align: center; font-size: 15px;
+          background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-line); }
+  /* الإحصاءات */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 22px; }
+  .stats div { text-align: center; padding: 10px 6px; border-radius: 16px; background: var(--card); border: 1px solid var(--card-line); }
+  .stats b { display: block; font-size: 22px; line-height: 1.2; font-weight: 800; color: var(--accent); }
+  .stats div:nth-child(2) b { color: var(--amber-ink); }
+  .stats div:nth-child(3) b { color: var(--brown-ink); }
+  .stats small { color: var(--muted); font-size: 12px; }
+  .bar { display: flex; align-items: center; gap: .5rem; margin: 14px 0 12px; }
+  .bar .seg { flex: 1; }
+  .refresh { width: 50px; height: 50px; border-radius: 16px; border: 1.5px solid var(--field-line); background: var(--field); color: var(--ink2); cursor: pointer; display: grid; place-items: center; }
   .refresh svg { width: 20px; height: 20px; }
   .refresh.spin svg { animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(-360deg); } }
-  #list, #answered { display: grid; gap: .6rem; }
-  .q.mine { border-color: color-mix(in srgb, var(--accent) 45%, #fff); }
-  .empty { text-align: center; color: var(--muted); padding: 2rem 0; }
-  h3.sec { font-size: .95rem; color: var(--muted); margin: 1.6rem 0 .6rem; }
-  #answered .q { opacity: .72; }
-  .idle { text-align: center; font-size: .85rem; color: var(--muted); margin-top: .8rem; }
-  .idle button { background: none; border: 0; color: var(--accent); font-weight: 600; cursor: pointer; text-decoration: underline; }
-  .radio-row { display: flex; flex-wrap: wrap; gap: .4rem; }
-  .radio-row label { border: 1.5px solid var(--line); border-radius: 99px; padding: .3em .9em; cursor: pointer; font-size: .9rem; background: #fff; }
+  #list, #answered { display: grid; gap: .7rem; }
+  .q.mine { border-color: color-mix(in srgb, var(--amber) 45%, transparent); }
+  .rank { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; margin-top: 2px;
+          background: var(--chip); border: 1px solid var(--chip-line); color: var(--muted); }
+  .q.r1 .rank { background: var(--amber); color: #2A1C15; border-color: transparent; }
+  .q.r2 .rank { background: var(--brown); color: #fff; border-color: transparent; }
+  .q.r3 .rank { background: color-mix(in srgb, var(--flame) 85%, #000); color: #fff; border-color: transparent; }
+  .empty { text-align: center; color: var(--muted); padding: 2.2rem 1rem; border: 1.5px dashed var(--card-line); border-radius: 20px; }
+  .empty svg { width: 40px; height: 40px; color: var(--accent); opacity: .7; display: block; margin: 0 auto 8px; }
+  h3.sec { font-size: .95rem; color: var(--muted); margin: 1.8rem 0 .7rem; }
+  #answered .q { opacity: .62; }
+  #answered .q .done { color: var(--accent); font-weight: 700; }
+  .idle { text-align: center; font-size: .85rem; color: var(--muted); margin-top: .9rem; }
+  .idle button { background: none; border: 0; color: var(--accent); font-weight: 700; cursor: pointer; text-decoration: underline; }
+  .radio-row { display: flex; flex-wrap: wrap; gap: 8px; background: var(--field); border: 1.5px solid var(--field-line); border-radius: 18px; padding: 8px; }
+  .radio-row label { padding: 7px 14px; border: 1px solid var(--chip-line); border-radius: 999px; font-size: 14px; cursor: pointer; color: var(--chip-ink); background: var(--chip); transition: .15s; }
   .radio-row input { display: none; }
-  .radio-row input:checked + span { color: var(--accent); font-weight: 700; }
-  .radio-row label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+  .radio-row label:has(input:checked) { background: var(--grad); color: var(--on-accent); font-weight: 700; box-shadow: 0 4px 14px var(--glow); border-color: transparent; }
+  @media (max-width: 370px) { .steps li { font-size: 11px; } .hero h1 { font-size: 22px; } }
 </style>
 </head>
 <body>
-<header class="top">
-  <img data-logo alt="" hidden>
-  <h1 id="title">…</h1>
-  <p id="sub"></p>
-</header>
-
+<div class="orbs"><span class="w o1"></span><span class="d o2"></span><span class="d o3"></span><span class="d o4"></span><span class="w o5"></span></div>
 <main class="wrap">
+  <header class="card hero">
+    <div class="hero-top">
+      <img class="logo" data-logo alt="مؤسسة الاستقامة" hidden>
+      <span id="themeSlot"></span>
+    </div>
+    <span class="brand"><span class="dot"></span>أسئلة الندوة</span>
+    <h1 id="title" style="margin-top:10px">…</h1>
+    <div class="rule"><i></i><i></i></div>
+    <div class="facts">
+      <span class="fact" id="fDate" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span></span></span>
+      <span class="fact" id="fSub" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span></span></span>
+    </div>
+    <div class="speakers" id="speakers" hidden><span class="lbl">المحاضرون</span><div class="list" id="spkList"></div></div>
+  </header>
+
+  <ol class="steps">
+    <li><span class="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></span><b>اكتب سؤالك</b>بإيجاز ووضوح</li>
+    <li><span class="n"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.4h2c.7-1.3 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21z"/></svg></span><b>أعجب بما يهمّك</b>من أسئلة غيرك</li>
+    <li><span class="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span><b>الأكثر إعجابًا</b>يُطرح أولًا</li>
+  </ol>
+
   <section class="card ask" id="askBox">
     <form id="askForm" hidden>
-      <h2>اكتب سؤالك</h2>
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.7-.8 1.2v.4M12 16.5h.01"/></svg>اكتب سؤالك</h2>
       <label class="field" id="targetField" hidden>
         <span>موجّه إلى</span>
         <div class="radio-row" id="targets"></div>
@@ -69,17 +119,24 @@
         <span id="nameLabel">اسمك (اختياري)</span>
         <input type="text" id="name" maxlength="60" autocomplete="name">
       </label>
-      <button class="btn" style="width:100%" id="sendBtn">إرسال السؤال</button>
+      <button class="btn" style="width:100%" id="sendBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-8-8 18-2-8z"/></svg>إرسال السؤال</button>
     </form>
     <div class="closed" id="closedBox" hidden>
-      <strong>باب الأسئلة مغلق حاليًا</strong>
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+      <strong style="display:block;font-size:20px;margin-top:10px">باب الأسئلة مغلق حاليًا</strong>
       <p class="muted" style="margin:.3rem 0 0">يمكنك تصفّح الأسئلة والإعجاب بها</p>
     </div>
-    <div class="card sent" id="sentBox" hidden></div>
+    <div class="sent" id="sentBox" hidden></div>
   </section>
 
+  <div class="stats">
+    <div><b id="stQ">0</b><small>سؤالًا معروضًا</small></div>
+    <div><b id="stL">0</b><small>إعجاباتك</small></div>
+    <div><b id="stM">0</b><small>أسئلتك</small></div>
+  </div>
+
   <div class="bar">
-    <div class="tabs" role="tablist">
+    <div class="seg" role="tablist">
       <button role="tab" aria-selected="true" data-order="top">الأكثر إعجابًا</button>
       <button role="tab" aria-selected="false" data-order="new">الأحدث</button>
     </div>
@@ -93,6 +150,11 @@
   <h3 class="sec" id="answeredTitle" hidden>تمت الإجابة عليها</h3>
   <div id="answered"></div>
 </main>
+<footer class="foot">
+  <div class="ornament"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 12l-7.1 3.1L12 22l-2.9-6.9L2 12l7.1-3.1z"/></svg></div>
+  <img data-emblem alt="" src="assets/istiqama-emblem.svg" style="margin-top:14px">
+  مؤسسة الاستقامة
+</footer>
 
 <script src="config.js"></script>
 <script src="app.js"></script>
@@ -112,20 +174,26 @@
 
   const heart = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.4h2c.7-1.3 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21z"/></svg>';
 
-  function card(q, liked, mine) {
-    return `<article class="q${mine ? ' mine' : ''}" data-id="${q.id}">
+  let maxLikes = 1;
+  function card(q, liked, mine, rank, done) {
+    const r = rank && rank <= 3 && q.l > 0 ? ' r' + rank : '';
+    return `<article class="q${mine ? ' mine' : ''}${r}" data-id="${q.id}">
+      ${rank ? `<span class="rank">${rank}</span>` : ''}
       <div class="body">${esc(q.b)}
-        <div class="meta">${q.a ? '<span>' + esc(q.a) + '</span>' : ''}${q.t ? '<span>إلى: ' + esc(q.t) + '</span>' : ''}${mine ? '<span class="badge">سؤالك</span>' : ''}</div>
+        <div class="meta">${q.a ? `<span class="who"><span class="av">${esc(Nadwa.initials(q.a))}</span>${esc(q.a)}</span>` : ''}${q.t ? '<span>إلى: ' + esc(q.t) + '</span>' : ''}${mine ? '<span class="badge amber">سؤالك</span>' : ''}${done ? '<span class="done">✓ أُجيب عنه</span>' : ''}</div>
       </div>
       <button class="like${liked ? ' on' : ''}" data-like="${q.id}" aria-pressed="${liked}" aria-label="إعجاب">
         ${heart}<span>${q.l}</span></button>
+      ${!done ? `<span class="meter" style="width:${Math.round(100 * q.l / maxLikes)}%"></span>` : ''}
     </article>`;
   }
 
   function renderEvent() {
     document.title = ev.title;
     $('title').textContent = ev.title;
-    $('sub').textContent = [ev.subtitle, formatDate(ev.event_date)].filter(Boolean).join(' — ');
+    const d = formatDate(ev.event_date);
+    $('fDate').hidden = !d; $('fDate').lastElementChild.textContent = d;
+    $('fSub').hidden = !ev.subtitle; $('fSub').lastElementChild.textContent = ev.subtitle || '';
     applyTheme(ev);
     $('askForm').hidden = !ev.is_open;
     $('closedBox').hidden = ev.is_open;
@@ -134,6 +202,8 @@
     $('name').required = ev.name_mode === 'required';
     if (!$('name').value) $('name').value = store.get('nadwa_name') || '';
     const sp = ev.speakers || [];
+    $('speakers').hidden = sp.length === 0;
+    $('spkList').innerHTML = sp.map(n => `<span class="spk"><span class="av">${esc(Nadwa.initials(n))}</span>${esc(n)}</span>`).join('');
     $('targetField').hidden = sp.length === 0;
     const current = (document.querySelector('input[name=target]:checked') || {}).value || '';
     const want = ['', ...sp].join('|');
@@ -147,13 +217,17 @@
 
   function renderLists(data) {
     const liked = getSet(likedKey()), mine = getSet(mineKey());
+    maxLikes = Math.max(1, ...data.questions.map(q => q.l));
     flip($('list'), () => {
       $('list').innerHTML = data.questions.length
-        ? data.questions.map(q => card(q, liked.has(q.id), mine.has(q.id))).join('')
-        : '<p class="empty">لا توجد أسئلة بعد، كن أول من يسأل</p>';
+        ? data.questions.map((q, i) => card(q, liked.has(q.id), mine.has(q.id), order === 'top' ? i + 1 : 0)).join('')
+        : '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>لا توجد أسئلة بعد، كن أول من يسأل</div>';
     });
     $('answeredTitle').hidden = data.answered.length === 0;
-    $('answered').innerHTML = data.answered.map(q => card(q, liked.has(q.id), mine.has(q.id))).join('');
+    $('answered').innerHTML = data.answered.map(q => card(q, liked.has(q.id), mine.has(q.id), 0, true)).join('');
+    $('stQ').textContent = data.total || 0;
+    $('stL').textContent = liked.size;
+    $('stM').textContent = mine.size;
   }
 
   async function load(manual) {
@@ -189,7 +263,7 @@
     const want = !liked.has(id);
     const num = btn.querySelector('span');
     const before = +num.textContent;
-    want ? liked.add(id) : liked.delete(id); saveSet(likedKey(), liked);
+    want ? liked.add(id) : liked.delete(id); saveSet(likedKey(), liked); $('stL').textContent = liked.size;
     document.querySelectorAll(`[data-like="${id}"]`).forEach(b => {
       b.classList.toggle('on', want); b.setAttribute('aria-pressed', want);
       b.querySelector('span').textContent = Math.max(0, before + (want ? 1 : -1));
@@ -247,6 +321,7 @@
   $('refreshBtn').addEventListener('click', () => load(true));
   $('resume').addEventListener('click', () => { lastTouch = Date.now(); load(true); });
 
+  $('themeSlot').appendChild(Nadwa.themeButton());
   load(false);
 })();
 </script>

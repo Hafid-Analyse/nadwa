@@ -5,48 +5,54 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>الإعدادات</title>
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b1418">
+<script>try{var t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('nadwa_theme');if(t==='auto')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="icon" type="image/svg+xml" href="assets/istiqama-emblem.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  .wrap { max-width: 900px; margin: 0 auto; padding: 16px 16px 60px; }
-  .head { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
-  .head h1 { flex: 1; margin: 0; font-size: 1.35rem; }
-  h2 { font-size: 1.05rem; margin: 0 0 .9rem; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 18px 16px 60px; }
+  .head { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; margin-bottom: 1.3rem; }
+  .head .logo { height: 40px; }
+  .head h1 { flex: 1; margin: 0; font-size: 1.4rem; font-weight: 800; }
+  h2 { font-size: 1.08rem; margin: 0 0 1rem; font-weight: 800; }
+  h2::after { content: ''; display: block; width: 46px; height: 3px; border-radius: 3px; margin-top: 8px; background: linear-gradient(90deg, transparent, var(--amber)); }
   section.card { margin-bottom: 1rem; }
-  .events { display: grid; gap: .5rem; }
-  .ev { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; border: 1.5px solid var(--line); border-radius: 12px; padding: .7rem .9rem; background: #fff; }
-  .ev.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .events { display: grid; gap: .6rem; }
+  .ev { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; border: 1.5px solid var(--field-line); border-radius: 16px; padding: .75rem .95rem; background: var(--field); }
+  .ev.sel { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   .ev .t { flex: 1; min-width: 180px; cursor: pointer; }
   .ev .t small { display: block; color: var(--muted); font-size: .82rem; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
   @media (max-width: 620px) { .row2 { grid-template-columns: 1fr; } }
-  .choice { display: grid; gap: .5rem; }
-  .choice label { display: flex; gap: .7rem; align-items: flex-start; border: 1.5px solid var(--line); border-radius: 12px; padding: .7rem .9rem; cursor: pointer; background: #fff; }
-  .choice label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
-  .choice input { margin-top: .35em; accent-color: var(--accent); }
+  .choice { display: grid; gap: .55rem; }
+  .choice label { display: flex; gap: .7rem; align-items: flex-start; border: 1.5px solid var(--field-line); border-radius: 16px; padding: .75rem .95rem; cursor: pointer; background: var(--field); transition: .15s; }
+  .choice label:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .choice input { margin-top: .4em; accent-color: var(--accent); }
   .choice small { display: block; color: var(--muted); }
-  .switch { display: flex; align-items: center; gap: .7em; cursor: pointer; padding: .4rem 0; }
-  .switch input { flex: none; width: 2.8em; height: 1.5em; appearance: none; background: #d6d0c4; border-radius: 99px; position: relative; cursor: pointer; transition: .2s; margin: 0; }
-  .switch input::after { content: ''; position: absolute; top: .17em; inset-inline-start: .17em; width: 1.16em; height: 1.16em; border-radius: 50%; background: #fff; transition: .2s; }
-  .switch input:checked { background: var(--accent); }
-  .switch input:checked::after { inset-inline-start: 1.47em; }
+  .switch { display: flex; align-items: center; gap: .8em; cursor: pointer; padding: .5rem 0; }
   .switch small { display: block; color: var(--muted); }
-  input[type=color] { width: 56px; height: 44px; border: 1.5px solid var(--line); border-radius: 10px; padding: 3px; background: #fff; cursor: pointer; }
+  input[type=color] { width: 58px; height: 48px; border: 1.5px solid var(--field-line); border-radius: 14px; padding: 4px; background: var(--field); cursor: pointer; }
   .colorrow { display: flex; gap: .6rem; align-items: center; }
-  .share { display: grid; grid-template-columns: auto 1fr; gap: 1.2rem; align-items: center; }
+  .themes { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 620px) { .themes { grid-template-columns: 1fr; } }
+  .share { display: grid; grid-template-columns: auto 1fr; gap: 1.3rem; align-items: center; }
   @media (max-width: 620px) { .share { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
-  #qr { background: #fff; padding: 10px; border-radius: 10px; border: 1px solid var(--line); }
+  #qr { background: #fff; padding: 10px; border-radius: 16px; box-shadow: 0 0 30px var(--glow); }
   #qr img, #qr canvas { width: 160px; height: 160px; display: block; }
-  .link { direction: ltr; text-align: left; font-family: ui-monospace, monospace; font-size: .85rem; background: #f1ede4; padding: .6em .8em; border-radius: 8px; overflow-wrap: anywhere; margin-bottom: .6rem; }
+  .link { direction: ltr; text-align: left; font-family: ui-monospace, monospace; font-size: .85rem; background: var(--field); border: 1.5px solid var(--field-line); padding: .65em .85em; border-radius: 12px; overflow-wrap: anywhere; margin-bottom: .7rem; }
   .btns { display: flex; gap: .5rem; flex-wrap: wrap; }
-  .savebar { position: sticky; bottom: 0; background: var(--bg); padding: .8rem 0; display: flex; gap: .5rem; border-top: 1px solid var(--line); }
+  .savebar { position: sticky; bottom: 0; padding: .9rem 0; display: flex; gap: .5rem; z-index: 5;
+    background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--card-line); }
 </style>
 </head>
 <body>
+<div class="orbs"><span class="w o1"></span><span class="d o2"></span><span class="d o4"></span></div>
 <div id="gate" hidden>
   <form class="card">
+    <img class="logo" data-logo alt="">
     <h1>الإعدادات</h1>
     <label class="field"><input type="password" placeholder="رمز المنشّط" autocomplete="current-password" required></label>
     <button class="btn" style="width:100%">دخول</button>
@@ -55,7 +61,9 @@
 
 <div class="wrap">
   <div class="head">
+    <img class="logo" data-logo alt="" hidden>
     <h1>الإعدادات</h1>
+    <span id="themeSlot"></span>
     <a class="btn sm ghost" href="moderator.html">لوحة المنشّط</a>
     <a class="btn sm ghost" href="screen.html" target="_blank">شاشة العرض</a>
   </div>
@@ -96,9 +104,16 @@
 
     <section class="card">
       <h2>المظهر</h2>
+      <div class="field"><span>الوضع (لكل الأجهزة، ويمكن لكل جهاز أن يبدّله بزر ☀️/🌙)</span>
+        <div class="choice themes">
+          <label><input type="radio" name="theme" value="dark"><span><b>🌙 ليلي</b><small>خلفية داكنة — مناسب للقاعات المظلمة</small></span></label>
+          <label><input type="radio" name="theme" value="light"><span><b>☀️ نهاري</b><small>خلفية بيضاء — أوضح على جهاز العرض وفي الضوء</small></span></label>
+          <label><input type="radio" name="theme" value="auto"><span><b>🌓 حسب الجهاز</b><small>يتبع إعداد هاتف كل حاضر</small></span></label>
+        </div>
+      </div>
       <label class="field"><span>اللون الرئيسي</span>
         <div class="colorrow"><input type="color" id="f_accent"><span class="muted" id="accentHex"></span></div></label>
-      <label class="field"><span>رابط الشعار (مثلًا: assets/logo.png بعد رفعه مع الملفات، أو رابط صورة كامل)</span><input type="text" id="f_logo" dir="ltr" placeholder="assets/logo.png"></label>
+      <label class="field"><span>رابط الشعار (مثلًا: assets/logo.png بعد رفعه مع الملفات، أو رابط صورة كامل)</span><input type="text" id="f_logo" dir="ltr" placeholder="اتركه فارغًا لشعار الاستقامة"></label>
     </section>
 
     <div class="savebar">
@@ -167,12 +182,18 @@
     $('f_speakers').value = (e.speakers || []).join('\n');
     document.querySelector(`input[name=name_mode][value=${e.name_mode}]`).checked = true;
     $('f_mod').checked = e.moderation; $('f_open').checked = e.is_open;
-    $('f_accent').value = /^#[0-9a-f]{6}$/i.test(e.accent) ? e.accent : '#0f766e';
-    $('accentHex').textContent = $('f_accent').value;
+    $('f_accent').value = (/^#[0-9a-f]{6}$/i.test(e.accent) && !['#0f766e', '#19e3c0', '#0c9e85'].includes(e.accent.toLowerCase())) ? e.accent : '#19e3c0';
+    $('accentHex').dataset.def = ['#0f766e', '#19e3c0', '#0c9e85'].includes((e.accent || '').toLowerCase()) ? '1' : '';
+    $('accentHex').textContent = $('accentHex').dataset.def ? 'الافتراضي (حسب الوضع)' : $('f_accent').value;
     $('f_logo').value = e.logo_url;
+    (document.querySelector(`input[name=theme][value=${e.theme || 'dark'}]`) || {}).checked = true;
     applyTheme(e);
   }
 
+  document.querySelectorAll('input[name=theme]').forEach(r => r.addEventListener('change', () => {
+    const v = r.value === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : r.value;
+    Nadwa.store.del('nadwa_theme'); Nadwa.setTheme(v);
+  }));
   $('f_accent').oninput = e => { $('accentHex').textContent = e.target.value; document.documentElement.style.setProperty('--accent', e.target.value); };
 
   $('form').addEventListener('submit', async ev => {
@@ -186,6 +207,7 @@
         name_mode: document.querySelector('input[name=name_mode]:checked').value,
         moderation: $('f_mod').checked, is_open: $('f_open').checked,
         accent: $('f_accent').value, logo_url: $('f_logo').value.trim(),
+        theme: (document.querySelector('input[name=theme]:checked') || {}).value || 'dark',
       }});
       toast('تم الحفظ ✓', 'ok'); await loadEvents();
     } catch (e) { toast(e.message, 'err'); }
@@ -251,6 +273,7 @@
     const a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'qr-nadwa.png'; a.click();
   };
 
+  $('themeSlot').appendChild(Nadwa.themeButton());
   adminGate(p => { pin = p; loadEvents().catch(e => toast(e.message, 'err')); });
 })();
 </script>

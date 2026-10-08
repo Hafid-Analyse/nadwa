@@ -57,13 +57,62 @@
     return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  // تطبيق لون الندوة والشعار
+  // ---------------- الوضع الليلي / النهاري ----------------
+  // الأولوية: ?theme= في الرابط ← اختيار هذا الجهاز ← إعداد الندوة ← ليلي
+  let lastEv = null;
+  function pickTheme(evTheme) {
+    let t = null;
+    try { t = new URLSearchParams(location.search).get('theme'); } catch (_) {}
+    t = t || store.get('nadwa_theme') || evTheme || 'dark';
+    if (t === 'auto') t = (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+    return t === 'light' ? 'light' : 'dark';
+  }
+  function setTheme(t) {
+    document.documentElement.dataset.theme = t;
+    const meta = document.querySelector('meta[name=theme-color]');
+    if (meta) meta.content = t === 'light' ? '#ffffff' : '#0b1418';
+    paintLogos();
+  }
+  function paintLogos() {
+    const light = document.documentElement.dataset.theme === 'light';
+    const def = light ? (C.DEFAULT_LOGO_LIGHT || C.DEFAULT_LOGO) : C.DEFAULT_LOGO;
+    const logo = (lastEv && lastEv.logo_url) || def || '';
+    document.querySelectorAll('[data-logo]').forEach(img => {
+      if (logo) { if (img.getAttribute('src') !== logo) img.src = logo; img.hidden = false; } else img.hidden = true;
+    });
+    document.querySelectorAll('[data-emblem]').forEach(img => { img.src = 'assets/istiqama-emblem.svg'; });
+  }
+  // زر صغير يبدّل الوضع على هذا الجهاز فقط
+  function themeButton() {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'theme-btn'; b.title = 'تبديل الوضع الليلي/النهاري'; b.setAttribute('aria-label', b.title);
+    b.innerHTML = '<svg class="moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>' +
+      '<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+    b.onclick = () => {
+      const t = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+      store.set('nadwa_theme', t); setTheme(t);
+    };
+    return b;
+  }
+
+  // تطبيق إعدادات مظهر الندوة: الوضع، اللون، الشعار
   function applyTheme(ev) {
     if (!ev) return;
-    if (/^#[0-9a-f]{3,8}$/i.test(ev.accent || '')) document.documentElement.style.setProperty('--accent', ev.accent);
-    document.querySelectorAll('[data-logo]').forEach(img => {
-      if (ev.logo_url) { img.src = ev.logo_url; img.hidden = false; } else img.hidden = true;
-    });
+    lastEv = ev;
+    const root = document.documentElement.style;
+    let acc = (ev.accent || '').toLowerCase();
+    if (['#0f766e', '#19e3c0', '#0c9e85'].includes(acc)) acc = '';   // الألوان الافتراضية ← لون كل وضع
+    if (/^#[0-9a-f]{6}$/i.test(acc)) {
+      root.setProperty('--accent', acc);
+      const n = parseInt(acc.slice(1), 16), lum = (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255;
+      root.setProperty('--on-accent', lum > 0.55 ? '#04201b' : '#ffffff');
+    } else { root.removeProperty('--accent'); root.removeProperty('--on-accent'); }
+    setTheme(pickTheme(ev.theme));
+  }
+
+  function initials(name) {
+    const p = String(name || '').replace(/^(د|أ|ش|م)\.\s*/, '').trim().split(/\s+/);
+    return (p[0] || '').charAt(0);
   }
 
   function formatDate(d) {
@@ -141,7 +190,9 @@
     return c;
   }
 
+  setTheme(pickTheme(null));
+
   const STATUS_LABEL = { pending: 'بانتظار المراجعة', approved: 'معروض', answered: 'تمت الإجابة', hidden: 'مخفي' };
 
-  window.Nadwa = { rpc, drawQr, deviceId, store, session, esc, applyTheme, formatDate, toast, attendeeUrl, flip, adminGate, STATUS_LABEL, C };
+  window.Nadwa = { rpc, drawQr, setTheme, pickTheme, themeButton, initials, deviceId, store, session, esc, applyTheme, formatDate, toast, attendeeUrl, flip, adminGate, STATUS_LABEL, C };
 })();

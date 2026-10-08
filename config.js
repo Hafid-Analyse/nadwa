@@ -11,6 +11,10 @@ window.NADWA_CONFIG = {
   REFRESH_SCREEN_SEC: 3,      // شاشة العرض
   REFRESH_MODERATOR_SEC: 3,   // لوحة المنشّط
 
+  // الشعار الافتراضي (إن لم يُحدَّد شعار للندوة في الإعدادات)
+  DEFAULT_LOGO: 'assets/istiqama-logo.svg',              // للوضع الليلي
+  DEFAULT_LOGO_LIGHT: 'assets/istiqama-logo-light.svg',  // للوضع النهاري
+
   // يتوقف التحديث التلقائي عند الحاضر بعد هذه المدة دون أي لمسة (لتوفير الاستهلاك)
   ATTENDEE_IDLE_MIN: 5,
 };

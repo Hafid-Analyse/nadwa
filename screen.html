@@ -4,59 +4,97 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>شاشة العرض</title>
+<meta name="theme-color" content="#0b1418">
+<script>try{var t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('nadwa_theme');if(t==='auto')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="icon" type="image/svg+xml" href="assets/istiqama-emblem.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
   html, body { height: 100%; }
-  body { font-size: clamp(14px, 1.15vw, 26px); overflow: hidden; background: var(--bg); }
-  .stage { height: 100vh; display: grid; grid-template-rows: auto 1fr; padding: 2.2em 2.6em; gap: 1.6em; }
-  header { display: flex; align-items: center; gap: 1.2em; }
-  header img { height: 4.2em; }
-  header h1 { margin: 0; font-size: 2.3em; line-height: 1.25; color: var(--accent); }
-  header p { margin: .2em 0 0; color: var(--muted); font-size: 1.1em; }
+  body { font-size: clamp(14px, 1.15vw, 26px); overflow: hidden; }
+  .stage { height: 100vh; display: grid; grid-template-rows: auto 1fr; padding: 2em 2.6em; gap: 1.5em; }
+  header { display: flex; align-items: center; gap: 1.6em; }
+  header .logo { height: 4.6em; }
+  header .sep { width: 1px; align-self: stretch; background: var(--card-line); }
+  header h1 { margin: 0; font-size: 2.3em; line-height: 1.25; font-weight: 800; }
+  header p { margin: .15em 0 0; color: var(--muted); font-size: 1.05em; }
+  header .rule { width: 7em; margin-top: .6em; }
   .grid { display: grid; grid-template-columns: 1fr 17em; gap: 2em; min-height: 0; }
   .main { display: flex; flex-direction: column; gap: 1em; min-height: 0; }
   .spot {
-    background: var(--accent); color: #fff; border-radius: 1.1em; padding: 1.4em 1.8em;
-    font-size: 1.9em; line-height: 1.45; font-weight: 600; position: relative;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 85%, #fff), var(--accent2)); color: var(--on-accent);
+    border-radius: 1.1em; padding: 1.4em 1.8em; box-shadow: 0 1em 3em var(--glow);
+    font-size: 1.9em; line-height: 1.45; font-weight: 800; position: relative;
   }
-  .spot small { display: block; font-size: .5em; font-weight: 400; opacity: .85; margin-top: .6em; }
-  .spot .tag { position: absolute; top: -.75em; inset-inline-start: 1.1em; background: #fff; color: var(--accent);
-    font-size: .42em; padding: .25em .9em; border-radius: 99px; font-weight: 700; box-shadow: 0 2px 8px rgb(0 0 0 / .15); }
+  .spot small { display: block; font-size: .5em; font-weight: 700; opacity: .75; margin-top: .6em; }
+  .spot .tag { position: absolute; top: -.8em; inset-inline-start: 1.1em; background: var(--card-solid); color: var(--amber);
+    border: 1px solid rgba(247,166,75,.5); font-size: .42em; padding: .2em 1em; border-radius: 99px; font-weight: 800; }
   #list { display: flex; flex-direction: column; gap: .7em; overflow: hidden; min-height: 0; flex: 1; }
   .row {
-    display: flex; align-items: center; gap: 1em; background: var(--card); border: 1px solid var(--line);
+    display: flex; align-items: center; gap: 1em; background: var(--card); border: 1px solid var(--card-line);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     border-radius: .9em; padding: .8em 1.1em; font-size: 1.35em; line-height: 1.45; flex: none;
   }
   .row .rank { flex: none; width: 1.9em; height: 1.9em; border-radius: 50%; display: grid; place-items: center;
-    background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: .85em; }
-  .row .txt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-  .row .who { display: block; font-size: .68em; color: var(--muted); }
-  .row .n { flex: none; display: flex; align-items: center; gap: .3em; font-weight: 700; color: var(--accent); font-size: 1.05em; }
+    background: var(--field); border: 1.5px solid var(--field-line); color: var(--ink2); font-weight: 800; font-size: .85em; }
+  .row:first-child .rank { border-color: rgba(247,166,75,.6); color: var(--amber); }
+  .row .txt { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 700; }
+  .row .who { display: block; font-size: .66em; color: var(--muted); font-weight: 400; }
+  .row .n { flex: none; display: flex; align-items: center; gap: .3em; font-weight: 800; color: var(--accent); font-size: 1.05em; }
   .row .n svg { width: 1em; height: 1em; }
-  .row.is-spot { box-shadow: inset 0 0 0 2px var(--accent); }
   aside { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-    background: var(--card); border: 1px solid var(--line); border-radius: 1.1em; padding: 1.4em; gap: .8em; }
-  #qr { background: #fff; padding: .7em; border-radius: .7em; }
+    background: var(--card); border: 1px solid var(--card-line); border-radius: 1.2em; padding: 1.4em; gap: .8em;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+  #qr { background: #fff; padding: .6em; border-radius: .8em; box-shadow: 0 0 2.5em var(--glow); }
   #qr img, #qr canvas { width: 13em !important; height: 13em !important; display: block; }
-  aside strong { font-size: 1.4em; color: var(--accent); }
+  aside strong { font-size: 1.45em; font-weight: 800; }
   aside .url { font-size: .8em; color: var(--muted); direction: ltr; overflow-wrap: anywhere; }
-  aside .count { font-size: 1em; color: var(--muted); }
+  aside .count { font-size: 1em; color: var(--amber); font-weight: 700; }
   .empty { margin: auto; text-align: center; color: var(--muted); font-size: 1.6em; }
-  .closed-flag { font-size: .9em; color: var(--warn); font-weight: 600; }
-  .tools { position: fixed; bottom: .8em; inset-inline-start: .8em; display: flex; gap: .5em; opacity: 0; transition: .2s; }
+  .closed-flag { font-size: .9em; color: var(--amber); font-weight: 700; }
+  .tools { position: fixed; bottom: .8em; inset-inline-start: .8em; display: flex; gap: .5em; opacity: 0; transition: .2s; z-index: 5; }
   body:hover .tools { opacity: 1; }
   .noqr .grid { grid-template-columns: 1fr; }
   .noqr aside { display: none; }
+  /* تفاصيل إضافية */
+  header .meta { flex: 1; }
+  .live { display: inline-flex; align-items: center; gap: .5em; font-size: .85em; font-weight: 800; color: var(--flame-ink);
+    border: 1px solid color-mix(in srgb, var(--flame) 40%, transparent); background: color-mix(in srgb, var(--flame) 8%, transparent);
+    padding: .25em .9em; border-radius: 99px; }
+  .live i { width: .6em; height: .6em; border-radius: 50%; background: var(--flame); animation: pulse 1.4s infinite; }
+  .clock { font-size: 1.6em; font-weight: 800; color: var(--ink2); font-variant-numeric: tabular-nums; direction: ltr; }
+  .hside { display: flex; flex-direction: column; align-items: flex-end; gap: .4em; }
+  .row { position: relative; overflow: hidden; }
+  .row .bar { position: absolute; inset-block-end: 0; inset-inline-start: 0; height: .22em; background: var(--grad); opacity: .65; transition: width .6s; border-radius: 3px; }
+  .row.r1 { border-color: color-mix(in srgb, var(--amber) 50%, transparent); }
+  .row.r1 .rank { background: var(--amber); color: #2A1C15; border-color: transparent; }
+  .row.r2 .rank { background: var(--brown); color: #fff; border-color: transparent; }
+  .row.r3 .rank { background: color-mix(in srgb, var(--flame) 85%, #000); color: #fff; border-color: transparent; }
+  .row .rank { border: 1.5px solid var(--field-line); }
+  .steps { list-style: none; margin: .2em 0 0; padding: 0; display: grid; gap: .45em; text-align: start; font-size: .82em; color: var(--ink2); width: 100%; }
+  .steps li { display: flex; align-items: center; gap: .6em; }
+  .steps li b { width: 1.7em; height: 1.7em; border-radius: 50%; display: grid; place-items: center; flex: none;
+    background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-line); font-size: .85em; }
+  .water { position: fixed; inset-inline-start: 1.6em; bottom: 1.4em; width: 7em; opacity: .07; pointer-events: none; z-index: 0; filter: grayscale(.2); }
+  :root[data-theme="light"] .water { opacity: .09; }
+  aside .stats { display: flex; gap: .6em; width: 100%; }
+  aside .stats div { flex: 1; padding: .5em; border-radius: .8em; background: var(--chip); border: 1px solid var(--chip-line); }
+  aside .stats b { display: block; font-size: 1.5em; line-height: 1.2; color: var(--amber-ink); }
+  aside .stats small { color: var(--muted); font-size: .75em; }
+  :root[data-theme="light"] .spot .tag { background: #fff; }
+  :root[data-theme="light"] #qr { box-shadow: 0 0 0 1px var(--card-line), 0 10px 30px rgba(16,52,56,.12); }
 </style>
 </head>
 <body>
+<div class="orbs"><span class="w o1"></span><span class="d o2"></span><span class="d o3"></span><span class="d o4"></span><span class="w o5"></span></div>
 <div class="stage">
   <header>
-    <img data-logo alt="" hidden>
-    <div><h1 id="title">…</h1><p id="sub"></p></div>
+    <img class="logo" data-logo alt="" hidden>
+    <span class="sep"></span>
+    <div class="meta"><h1 id="title">…</h1><p id="sub"></p><div class="rule"><i></i><i></i></div></div>
+    <div class="hside"><span class="live"><i></i>مباشر</span><span class="clock" id="clock"></span></div>
   </header>
   <div class="grid">
     <div class="main">
@@ -66,16 +104,22 @@
     <aside>
       <strong>اطرح سؤالك</strong>
       <div id="qr"></div>
-      <div class="muted">امسح الرمز بهاتفك</div>
       <div class="url" id="url"></div>
+      <ol class="steps">
+        <li><b>1</b>امسح الرمز بهاتفك</li>
+        <li><b>2</b>اكتب سؤالك</li>
+        <li><b>3</b>أعجب بالأسئلة التي تهمّك</li>
+      </ol>
       <div class="closed-flag" id="closed" hidden>باب الأسئلة مغلق</div>
-      <div class="count" id="count"></div>
+      <div class="stats"><div><b id="cQ">0</b><small>سؤالًا</small></div><div><b id="cL">0</b><small>إعجابًا</small></div></div>
     </aside>
   </div>
 </div>
+<img class="water" data-emblem src="assets/istiqama-emblem.svg" alt="">
 <div class="tools">
   <button class="btn sm quiet" id="fs">ملء الشاشة</button>
   <button class="btn sm quiet" id="toggleQr">إظهار/إخفاء الرمز</button>
+  <span id="themeSlot"></span>
 </div>
 
 <script src="lib/qrcode.js"></script>
@@ -110,7 +154,8 @@
       $('sub').textContent = [ev.subtitle, formatDate(ev.event_date)].filter(Boolean).join(' — ');
       applyTheme(ev); makeQr(ev);
       $('closed').hidden = ev.is_open;
-      $('count').textContent = d.total ? `${d.total} سؤالًا` : '';
+      $('cQ').textContent = d.total || 0;
+      $('cL').textContent = [...d.questions, ...d.answered].reduce((a, q) => a + q.l, 0);
 
       const s = d.spotlight;
       $('spot').hidden = !s;
@@ -118,9 +163,11 @@
         <small>${[s.a, s.t ? 'إلى: ' + s.t : ''].filter(Boolean).map(esc).join(' · ')}</small>`;
 
       const rows = d.questions.filter(q => !s || q.id !== s.id).slice(0, s ? SHOW - 2 : SHOW);
+      const max = Math.max(1, ...rows.map(q => q.l));
       flip($('list'), () => {
         $('list').innerHTML = rows.length ? rows.map((q, i) => `
-          <div class="row" data-id="${q.id}">
+          <div class="row${i < 3 && q.l > 0 ? ' r' + (i + 1) : ''}" data-id="${q.id}">
+            <span class="bar" style="width:${Math.round(100 * q.l / max)}%"></span>
             <span class="rank">${i + 1}</span>
             <span class="txt">${esc(q.b)}${q.a || q.t ? `<span class="who">${[q.a, q.t ? 'إلى: ' + q.t : ''].filter(Boolean).map(esc).join(' · ')}</span>` : ''}</span>
             <span class="n">${heart}${q.l}</span>
@@ -140,6 +187,9 @@
 
   $('fs').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
   $('toggleQr').onclick = () => document.body.classList.toggle('noqr');
+  $('themeSlot').appendChild(Nadwa.themeButton());
+  const tick = () => { $('clock').textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); };
+  tick(); setInterval(tick, 10000);
   load();
 })();
 </script>
