@@ -7,7 +7,8 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0b1418">
 <script>try{var t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('nadwa_theme');if(t==='auto')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-<link rel="icon" type="image/svg+xml" href="assets/istiqama-emblem.svg">
+<link rel="icon" type="image/svg+xml" href="assets/icon-settings.svg">
+<link rel="apple-touch-icon" href="assets/icon-settings-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
@@ -113,7 +114,7 @@
       </div>
       <label class="field"><span>اللون الرئيسي</span>
         <div class="colorrow"><input type="color" id="f_accent"><span class="muted" id="accentHex"></span></div></label>
-      <label class="field"><span>رابط الشعار (مثلًا: assets/logo.png بعد رفعه مع الملفات، أو رابط صورة كامل)</span><input type="text" id="f_logo" dir="ltr" placeholder="اتركه فارغًا لشعار الاستقامة"></label>
+      <label class="field"><span>شعار الجهة المنظّمة لهذه الندوة (ارفع الصورة في مجلد assets ثم اكتب مسارها، أو رابط صورة كامل). للوضع النهاري يبحث التطبيق تلقائيًا عن نسخة باسم ‎-light (مثل logo-light.svg)</span><input type="text" id="f_logo" dir="ltr" placeholder="اتركه فارغًا للشعار الافتراضي — مثال: assets/istiqama-logo.svg"></label>
     </section>
 
     <div class="savebar">

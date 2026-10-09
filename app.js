@@ -75,12 +75,23 @@
   }
   function paintLogos() {
     const light = document.documentElement.dataset.theme === 'light';
-    const def = light ? (C.DEFAULT_LOGO_LIGHT || C.DEFAULT_LOGO) : C.DEFAULT_LOGO;
-    const logo = (lastEv && lastEv.logo_url) || def || '';
+    const custom = lastEv && lastEv.logo_url;
+    let src, fallback = null;
+    if (custom) {
+      // في الوضع النهاري نجرّب نسخة "-light" من نفس الشعار، وإن لم توجد نعود للأصل
+      fallback = custom;
+      src = light ? custom.replace(/(\.[a-z0-9]+)(\?.*)?$/i, '-light$1$2') : custom;
+    } else {
+      src = (light ? (C.DEFAULT_LOGO_LIGHT || C.DEFAULT_LOGO) : C.DEFAULT_LOGO) || '';
+    }
     document.querySelectorAll('[data-logo]').forEach(img => {
-      if (logo) { if (img.getAttribute('src') !== logo) img.src = logo; img.hidden = false; } else img.hidden = true;
+      if (!src) { img.hidden = true; return; }
+      img.hidden = false;
+      if (img.dataset.want === src) return;
+      img.dataset.want = src;
+      img.onerror = fallback && src !== fallback ? () => { img.onerror = null; img.src = fallback; } : null;
+      img.src = src;
     });
-    document.querySelectorAll('[data-emblem]').forEach(img => { img.src = 'assets/istiqama-emblem.svg'; });
   }
   // زر صغير يبدّل الوضع على هذا الجهاز فقط
   function themeButton() {
