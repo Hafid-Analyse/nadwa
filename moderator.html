@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>لوحة المنشّط</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>المنشّط</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0b1418">
 <script>try{var t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('nadwa_theme');if(t==='auto')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
@@ -14,31 +14,110 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  .wrap { max-width: 980px; margin: 0 auto; padding: 18px 16px 40px; }
-  .head { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; margin-bottom: 1.1rem; }
-  .head .logo { height: 40px; }
-  .head h1 { font-size: 1.25rem; margin: 0; flex: 1; min-width: 200px; font-weight: 800; }
-  .head h1 small { display: block; font-size: .8rem; color: var(--muted); font-weight: 400; }
-  .switch { display: inline-flex; align-items: center; gap: .5em; font-size: .9rem; font-weight: 700; cursor: pointer; }
-  .spotbar { background: var(--grad); color: var(--on-accent);
-    border-radius: 20px; padding: .9rem 1.1rem; display: flex; gap: .8rem; align-items: center; margin-bottom: 1rem; box-shadow: 0 10px 28px var(--glow); }
-  .spotbar .t { flex: 1; font-weight: 800; }
-  .spotbar small { display: block; opacity: .75; font-weight: 700; font-size: .8rem; }
-  .spotbar .btn.quiet { background: rgba(0,0,0,.15); color: var(--on-accent); border-color: rgba(0,0,0,.15); }
-  .tabs { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; position: sticky; top: 0; padding: .6rem 0; z-index: 5;
-    background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-  .tabs button { border: 1px solid var(--chip-line); background: var(--chip); border-radius: 99px; padding: .45em 1.05em; cursor: pointer; font-weight: 700; color: var(--chip-ink); transition: .15s; }
-  .tabs button[aria-selected=true] { background: var(--grad); color: var(--on-accent); border-color: transparent; box-shadow: 0 4px 14px var(--glow); }
-  .tabs .c { display: inline-block; min-width: 1.6em; padding: 0 .4em; border-radius: 99px; background: color-mix(in srgb, var(--ink) 12%, transparent); font-size: .8rem; margin-inline-start: .35em; text-align: center; }
-  .tabs [data-tab=pending] .c.hot { background: var(--amber); color: #2A1C15; }
-  #list { display: grid; gap: .7rem; }
-  .q .actions { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .7rem; }
-  .q .likes { flex: none; text-align: center; min-width: 58px; font-weight: 800; color: var(--accent); font-size: 1.3rem; }
-  .q .likes small { display: block; font-size: .7rem; color: var(--muted); font-weight: 400; }
-  .q.spotlit { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 6px 24px var(--glow); }
-  .empty { text-align: center; color: var(--muted); padding: 3rem 0; }
-  .links { display: flex; gap: .45rem; align-items: center; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 14px 14px 40px; }
+
+  /* ---------- الرأس ---------- */
+  .head { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1.2rem; margin-bottom: 1rem; }
+  .brandrow { display: flex; align-items: center; gap: .7rem; flex: 1; min-width: 0; }
+  .head .logo { height: 36px; flex: none; }
+  .head h1 { font-size: 1.15rem; margin: 0; flex: 1; min-width: 0; font-weight: 800; line-height: 1.4; }
+  .head h1 small { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--amber-ink); font-weight: 700; }
+  .controls { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .switch { display: inline-flex; align-items: center; gap: .5em; font-size: .88rem; font-weight: 700; cursor: pointer; }
+  .links { display: flex; gap: .4rem; align-items: center; }
   .links .theme-btn { width: 36px; height: 36px; }
+  .links .btn.sm { min-height: 36px; }
+
+  /* ---------- التخطيط ---------- */
+  .layout { display: grid; gap: 14px; }
+  @media (min-width: 980px) {
+    .layout { grid-template-columns: 380px 1fr; align-items: start; }
+    .side { position: sticky; top: 14px; }
+  }
+  .sec-title { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 4px 2px 10px; flex-wrap: wrap; }
+  .sec-title h2 { font-size: 1rem; margin: 0; font-weight: 800; }
+  .sec-title small { color: var(--muted); font-size: .8rem; }
+
+  /* ---------- على الشاشة الآن ---------- */
+  .now { position: relative; overflow: hidden; border-radius: 22px; padding: 16px 16px 14px; }
+  .now.on { background: var(--grad); color: var(--on-accent); box-shadow: 0 12px 30px var(--glow); border: 0; }
+  .now .lbl { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 800; padding: 2px 10px; border-radius: 99px;
+    background: color-mix(in srgb, currentColor 14%, transparent); }
+  .now .lbl i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 1.4s infinite; }
+  .now .txt { font-size: 1.2rem; font-weight: 800; line-height: 1.55; margin: 10px 0 4px; overflow-wrap: anywhere; }
+  .now .who { font-size: .85rem; opacity: .8; }
+  .now .btns { display: flex; gap: 8px; margin-top: 14px; }
+  .now .btns .btn { flex: 1; min-height: 50px; }
+  .now.on .btn.done { background: #fff; color: #04201b; box-shadow: none; }
+  :root[data-theme="light"] .now.on .btn.done { color: var(--accent2); }
+  .now.on .btn.quiet { background: rgba(0,0,0,.14); color: var(--on-accent); border-color: transparent; }
+  .now .idle { color: var(--muted); text-align: center; padding: 14px 6px 6px; }
+  .now .idle svg { width: 38px; height: 38px; display: block; margin: 0 auto 8px; color: var(--accent); opacity: .75; }
+
+  /* ---------- قائمة الأسئلة ---------- */
+  #list, #answered { display: grid; gap: 10px; }
+  .item {
+    position: relative; overflow: hidden; width: 100%; text-align: start; cursor: pointer;
+    display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 18px;
+    background: var(--card); border: 1px solid var(--card-line); color: var(--ink); box-shadow: var(--shadow-sm);
+    font: inherit; transition: transform .1s, border-color .15s;
+  }
+  .item:active { transform: scale(.985); }
+  .item:hover { border-color: var(--accent-line); }
+  .item .rank { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 800;
+    background: var(--chip); border: 1px solid var(--chip-line); color: var(--muted); margin-top: 1px; }
+  .item.r1 .rank { background: var(--amber); color: #2A1C15; border-color: transparent; }
+  .item.r2 .rank { background: var(--brown); color: #fff; border-color: transparent; }
+  .item.r3 .rank { background: color-mix(in srgb, var(--flame) 85%, #000); color: #fff; border-color: transparent; }
+  .item.r1 { border-color: color-mix(in srgb, var(--amber) 45%, transparent); }
+  .item .b { flex: 1; min-width: 0; }
+  .item .t { display: block; font-size: 1.06rem; font-weight: 700; line-height: 1.6; overflow-wrap: anywhere; }
+  .item .m { font-size: .8rem; color: var(--muted); margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .item .n { flex: none; display: flex; flex-direction: column; align-items: center; min-width: 46px; color: var(--accent); font-weight: 800; font-size: 1.15rem; line-height: 1.2; }
+  .item .n svg { width: 18px; height: 18px; }
+  .item .bar { position: absolute; bottom: 0; inset-inline-start: 0; height: 3px; background: var(--grad); opacity: .65; border-radius: 3px; transition: width .5s; }
+  #answered .item { opacity: .6; }
+  .empty { text-align: center; color: var(--muted); padding: 2.2rem 1rem; border: 1.5px dashed var(--card-line); border-radius: 18px; }
+  details.answered { margin-top: 14px; }
+  details.answered summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px; border-radius: 16px; background: var(--chip); border: 1px solid var(--chip-line); font-weight: 700; color: var(--ink2); }
+  details.answered summary::-webkit-details-marker { display: none; }
+  details.answered summary::after { content: '▾'; color: var(--muted); }
+  details.answered[open] summary::after { content: '▴'; }
+  details.answered #answered { margin-top: 10px; }
+
+  /* ---------- نافذة التأكيد ---------- */
+  .modal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-end; justify-content: center; padding: 12px;
+    background: rgba(3,8,10,.62); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); animation: fade .15s ease; }
+  :root[data-theme="light"] .modal { background: rgba(20,40,44,.35); }
+  .sheet { width: 100%; max-width: 520px; background: var(--card-solid); border: 1px solid var(--card-line); border-top: 3px solid var(--amber);
+    border-radius: 24px; padding: 18px; box-shadow: 0 -10px 50px rgba(0,0,0,.45); animation: up .2s ease; max-height: 88vh; overflow: auto; }
+  .sheet .k { font-size: .8rem; color: var(--amber-ink); font-weight: 800; }
+  .sheet .qt { font-size: 1.25rem; font-weight: 800; line-height: 1.6; margin: 8px 0 6px; overflow-wrap: anywhere; }
+  .sheet .m { color: var(--muted); font-size: .85rem; display: flex; gap: 10px; flex-wrap: wrap; }
+  .sheet .warn { margin-top: 12px; padding: 10px 12px; border-radius: 14px; font-size: .85rem; color: var(--amber-ink);
+    background: color-mix(in srgb, var(--amber) 9%, transparent); border: 1px solid color-mix(in srgb, var(--amber) 35%, transparent); }
+  .sheet .btns { display: grid; gap: 8px; margin-top: 16px; }
+  .sheet .btn { min-height: 52px; font-size: 1rem; }
+  @media (min-width: 640px) { .modal { align-items: center; } }
+  @keyframes fade { from { opacity: 0; } }
+  @keyframes up { from { transform: translateY(30px); opacity: 0; } }
+
+  /* ---------- الهاتف ---------- */
+  @media (max-width: 680px) {
+    .wrap { padding: 10px 10px 30px; }
+    .head { gap: .6rem; margin-bottom: .7rem; }
+    .brandrow { flex-basis: 100%; }
+    .head .logo { height: 28px; }
+    .head h1 { font-size: 1rem; }
+    .controls { flex-basis: 100%; justify-content: space-between;
+      background: var(--card); border: 1px solid var(--card-line); border-radius: 16px; padding: .45rem .65rem; }
+    .links .lbl { display: none; }
+    .links .btn.sm { width: 38px; padding: 0; }
+    .now .txt { font-size: 1.12rem; }
+    .item { padding: 12px; gap: 10px; }
+    .item .t { font-size: 1rem; }
+  }
 </style>
 </head>
 <body>
@@ -46,38 +125,43 @@
 <div id="gate" hidden>
   <form class="card">
     <img class="logo" data-logo alt="">
-    <h1>لوحة المنشّط</h1>
-    <label class="field"><input type="password" placeholder="رمز المنشّط" autocomplete="current-password" required></label>
+    <h1>المنشّط</h1>
+    <label class="field"><input type="password" placeholder="الرمز السري" autocomplete="current-password" required></label>
     <button class="btn" style="width:100%">دخول</button>
   </form>
 </div>
 
 <div class="wrap">
   <div class="head">
-    <img class="logo" data-logo alt="" hidden>
-    <h1 id="title">…<small></small></h1>
-    <label class="switch"><input type="checkbox" id="openToggle"> باب الأسئلة مفتوح</label>
-    <div class="links">
-      <span id="themeSlot"></span>
-      <a class="btn sm ghost" href="screen.html" target="_blank">شاشة العرض</a>
-      <a class="btn sm ghost" href="settings.html">الإعدادات</a>
+    <div class="brandrow">
+      <img class="logo" data-logo alt="" hidden>
+      <h1 id="title">…<small>🎙️ المنشّط</small></h1>
+    </div>
+    <div class="controls">
+      <label class="switch"><input type="checkbox" id="openToggle"> <span>باب الأسئلة مفتوح</span></label>
+      <div class="links">
+        <span id="themeSlot"></span>
+        <a class="btn sm ghost" href="screen.html" target="_blank" title="شاشة العرض"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5l4 4 4-4"/><rect x="2.5" y="6.5" width="19" height="13" rx="2.5"/><path d="M8 22h8"/></svg><span class="lbl">شاشة العرض</span></a>
+      </div>
     </div>
   </div>
 
-  <div class="spotbar" id="spotbar" hidden>
-    <div class="t" id="spotText"></div>
-    <button class="btn sm quiet" id="spotDone">تمت الإجابة</button>
-    <button class="btn sm quiet" id="spotClear">إزالة من الشاشة</button>
+  <div class="layout">
+    <div class="side">
+      <section class="card now" id="now"></section>
+    </div>
+    <main>
+      <div class="sec-title"><h2 id="listTitle">الأسئلة المقبولة</h2><small>مرتّبة حسب الإعجابات · اضغط على سؤال لعرضه</small></div>
+      <div id="list"></div>
+      <details class="answered" id="ansBox" hidden>
+        <summary><span id="ansTitle">تمت الإجابة</span></summary>
+        <div id="answered"></div>
+      </details>
+    </main>
   </div>
-
-  <div class="tabs" role="tablist">
-    <button data-tab="pending" aria-selected="true">بانتظار المراجعة<span class="c">0</span></button>
-    <button data-tab="approved" aria-selected="false">المعروضة<span class="c">0</span></button>
-    <button data-tab="answered" aria-selected="false">تمت الإجابة<span class="c">0</span></button>
-    <button data-tab="hidden" aria-selected="false">المخفية<span class="c">0</span></button>
-  </div>
-  <div id="list"></div>
 </div>
+
+<div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 
 <script src="config.js"></script>
 <script src="app.js"></script>
@@ -85,47 +169,115 @@
 (() => {
   const { rpc, esc, applyTheme, toast, flip, adminGate, C } = Nadwa;
   const $ = id => document.getElementById(id);
-  let pin, ev, qs = [], tab = 'pending', timer, firstLoad = true, busy = false;
   const params = new URLSearchParams(location.search);
-
-  const ACTIONS = {
-    pending:  [['approved', 'قبول', ''], ['spot', 'قبول وعرض الآن', 'ghost'], ['hidden', 'إخفاء', 'quiet']],
-    approved: [['spot', 'عرض على الشاشة', ''], ['answered', 'تمت الإجابة', 'ghost'], ['hidden', 'إخفاء', 'quiet']],
-    answered: [['approved', 'إعادة للعرض', 'quiet']],
-    hidden:   [['approved', 'استعادة ونشر', 'quiet'], ['pending', 'إرجاع للمراجعة', 'quiet']],
-  };
-
-  function fmtTime(t) { try { return new Date(t).toLocaleTimeString('ar-DZ-u-nu-latn', { hour: '2-digit', minute: '2-digit' }); } catch (_) { return ''; } }
+  let pin, ev, qs = [], timer, busy = false, sheetFor = null;
+  const heart = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.4h2c.7-1.3 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21z"/></svg>';
+  const meta = q => [q.author ? esc(q.author) : 'بدون اسم', q.target ? 'إلى: ' + esc(q.target) : ''].filter(Boolean).map(x => `<span>${x}</span>`).join('');
 
   function render() {
-    const counts = { pending: 0, approved: 0, answered: 0, hidden: 0 };
-    qs.forEach(q => counts[q.status]++);
-    document.querySelectorAll('[data-tab]').forEach(b => {
-      const c = b.querySelector('.c'); c.textContent = counts[b.dataset.tab];
-      if (b.dataset.tab === 'pending') c.classList.toggle('hot', counts.pending > 0);
-    });
-    document.title = (counts.pending ? `(${counts.pending}) ` : '') + 'لوحة المنشّط';
+    const spot = qs.find(q => ev && q.id === ev.spotlight_id && ['approved', 'answered'].includes(q.status));
+    // على الشاشة الآن
+    const now = $('now');
+    now.classList.toggle('on', !!spot);
+    now.innerHTML = spot ? `
+      <span class="lbl"><i></i>على الشاشة الآن</span>
+      <div class="txt">${esc(spot.body)}</div>
+      <div class="who">${[spot.author, spot.target ? 'إلى: ' + spot.target : '', '♥ ' + spot.likes].filter(Boolean).map(esc).join(' · ')}</div>
+      <div class="btns">
+        <button class="btn done" id="doneBtn">✓ تمت الإجابة</button>
+        <button class="btn quiet" id="clearBtn">إزالة من الشاشة</button>
+      </div>` : `
+      <div class="idle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5l4 4 4-4"/><rect x="2.5" y="6.5" width="19" height="13" rx="2.5"/><path d="M8 22h8"/></svg>
+      لا يوجد سؤال على الشاشة<br><small>اختر سؤالًا من القائمة لعرضه</small></div>`;
+    if (spot) { $('doneBtn').onclick = () => markDone(spot.id, true); $('clearBtn').onclick = clearSpot; }
 
-    const spot = qs.find(q => ev && q.id === ev.spotlight_id);
-    $('spotbar').hidden = !spot;
-    if (spot) $('spotText').innerHTML = esc(spot.body) + `<small>معروض الآن على الشاشة · ${spot.likes} إعجاب</small>`;
-
-    let rows = qs.filter(q => q.status === tab);
-    if (tab === 'approved') rows.sort((a, b) => b.likes - a.likes);
-    else if (tab === 'answered') rows.sort((a, b) => (b.answered_at || '').localeCompare(a.answered_at || ''));
-    else rows.sort((a, b) => a.created_at.localeCompare(b.created_at));
-
+    // القائمة: المقبولة فقط، مرتّبة بالإعجابات
+    const rows = qs.filter(q => q.status === 'approved' && (!spot || q.id !== spot.id))
+                   .sort((a, b) => b.likes - a.likes || a.created_at.localeCompare(b.created_at));
+    const max = Math.max(1, ...rows.map(q => q.likes));
+    $('listTitle').textContent = `الأسئلة المقبولة (${rows.length})`;
+    document.title = (rows.length ? `(${rows.length}) ` : '') + 'المنشّط';
     flip($('list'), () => {
-      $('list').innerHTML = rows.length ? rows.map(q => `
-        <article class="q${ev && q.id === ev.spotlight_id ? ' spotlit' : ''}" data-id="${q.id}">
-          <div class="body">${esc(q.body)}
-            <div class="meta"><span>${q.author ? esc(q.author) : 'بدون اسم'}</span>${q.target ? `<span>إلى: ${esc(q.target)}</span>` : ''}<span>${fmtTime(q.created_at)}</span></div>
-            <div class="actions">${ACTIONS[q.status].map(([a, label, cls]) =>
-              `<button class="btn sm ${cls}" data-act="${a}" data-q="${q.id}">${label}</button>`).join('')}</div>
-          </div>
-          <div class="likes">${q.likes}<small>إعجاب</small></div>
-        </article>`).join('') : '<p class="empty">لا توجد أسئلة هنا</p>';
+      $('list').innerHTML = rows.length ? rows.map((q, i) => `
+        <button type="button" class="item${i < 3 && q.likes > 0 ? ' r' + (i + 1) : ''}" data-id="${q.id}" data-open="${q.id}">
+          <span class="rank">${i + 1}</span>
+          <span class="b"><span class="t">${esc(q.body)}</span><span class="m">${meta(q)}</span></span>
+          <span class="n">${heart}${q.likes}</span>
+          <span class="bar" style="width:${Math.round(100 * q.likes / max)}%"></span>
+        </button>`).join('') : `<div class="empty">${ev && ev.moderation ? 'لا توجد أسئلة مقبولة بعد — ينتظر مرافق المنشّط مراجعتها' : 'لا توجد أسئلة بعد'}</div>`;
     });
+
+    const ans = qs.filter(q => q.status === 'answered').sort((a, b) => (b.answered_at || '').localeCompare(a.answered_at || ''));
+    $('ansBox').hidden = ans.length === 0;
+    $('ansTitle').textContent = `تمت الإجابة (${ans.length})`;
+    $('answered').innerHTML = ans.map(q => `
+      <button type="button" class="item" data-open="${q.id}">
+        <span class="b"><span class="t">${esc(q.body)}</span><span class="m">${meta(q)}<span>♥ ${q.likes}</span></span></span>
+      </button>`).join('');
+  }
+
+  // ---------- نافذة التأكيد (القائمة لا تتحرك وهي مفتوحة) ----------
+  function openSheet(id) {
+    const q = qs.find(x => x.id === id); if (!q) return;
+    sheetFor = id;
+    const spot = qs.find(x => ev && x.id === ev.spotlight_id && x.status !== 'hidden');
+    const answered = q.status === 'answered';
+    $('sheet').innerHTML = `
+      <div class="k">${answered ? 'سؤال أُجيب عنه' : 'عرض هذا السؤال على الشاشة؟'}</div>
+      <div class="qt">${esc(q.body)}</div>
+      <div class="m">${meta(q)}<span>♥ ${q.likes}</span></div>
+      ${!answered && spot && spot.id !== q.id ? `<div class="warn">سيحلّ محلّ السؤال المعروض الآن: «${esc(spot.body.length > 70 ? spot.body.slice(0, 70) + '…' : spot.body)}»</div>` : ''}
+      <div class="btns">
+        ${answered
+          ? `<button class="btn" data-do="restore">إعادته إلى القائمة</button>`
+          : `<button class="btn" data-do="show">📺 عرض على الشاشة</button>
+             <button class="btn ghost" data-do="done">✓ تمت الإجابة (دون عرض)</button>`}
+        <button class="btn quiet" data-do="cancel">إلغاء</button>
+      </div>`;
+    $('modal').hidden = false;
+  }
+  function closeSheet() { $('modal').hidden = true; sheetFor = null; render(); }
+  $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeSheet(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('modal').hidden) closeSheet(); });
+  $('sheet').addEventListener('click', async e => {
+    const b = e.target.closest('[data-do]'); if (!b) return;
+    const id = sheetFor, d = b.dataset.do;
+    if (d === 'cancel') return closeSheet();
+    $('sheet').querySelectorAll('button').forEach(x => (x.disabled = true));
+    if (d === 'show') await showOnScreen(id);
+    if (d === 'done') await markDone(id, false);
+    if (d === 'restore') await setStatus(id, 'approved', 'أُعيد إلى القائمة');
+    closeSheet();
+  });
+  document.addEventListener('click', e => { const it = e.target.closest('[data-open]'); if (it) openSheet(it.dataset.open); });
+
+  // ---------- الأفعال ----------
+  async function showOnScreen(id) {
+    try {
+      await rpc('admin_spotlight', { p_pin: pin, p_event: ev.id, p_question: id });
+      ev.spotlight_id = id; toast('معروض الآن على الشاشة', 'ok');
+    } catch (e) { toast(e.message, 'err'); }
+  }
+  async function setStatus(id, st, msg) {
+    try {
+      await rpc('admin_set_status', { p_pin: pin, p_question: id, p_status: st });
+      const q = qs.find(x => x.id === id);
+      if (q) { q.status = st; q.answered_at = st === 'answered' ? new Date().toISOString() : null; }
+      if (msg) toast(msg, 'ok');
+      return true;
+    } catch (e) { toast(e.message, 'err'); return false; }
+  }
+  async function markDone(id, fromScreen) {
+    busy = true;
+    const ok = await setStatus(id, 'answered', 'تمت الإجابة ✓');
+    if (ok && (fromScreen || ev.spotlight_id === id)) {
+      try { await rpc('admin_spotlight', { p_pin: pin, p_event: ev.id, p_question: null }); ev.spotlight_id = null; } catch (_) {}
+    }
+    busy = false; render();
+  }
+  async function clearSpot() {
+    try { await rpc('admin_spotlight', { p_pin: pin, p_event: ev.id, p_question: null }); ev.spotlight_id = null; render(); }
+    catch (e) { toast(e.message, 'err'); }
   }
 
   async function load() {
@@ -135,60 +287,20 @@
         const evs = await rpc('admin_list_events', { p_pin: pin });
         const want = params.get('e');
         ev = evs.find(e => e.id === want) || evs.find(e => e.is_active) || evs[0];
-        if (!ev) { $('title').firstChild.textContent = 'لا توجد ندوة — أنشئها من الإعدادات'; return; }
+        if (!ev) { $('title').firstChild.textContent = 'لا توجد ندوة نشطة'; return; }
       }
       const d = await rpc('admin_list_questions', { p_pin: pin, p_event: ev.id });
       ev = d.event; qs = d.questions;
       $('title').firstChild.textContent = ev.title;
-      $('title').querySelector('small').textContent = ev.moderation ? 'المراجعة مفعّلة: الأسئلة تنتظر قبولك' : 'المراجعة معطّلة: الأسئلة تُنشر مباشرة';
       $('openToggle').checked = ev.is_open;
       applyTheme(ev);
-      if (firstLoad && !ev.moderation) { setTab('approved'); }
-      firstLoad = false;
-      if (!busy) render();
+      if (!busy && $('modal').hidden) render();
     } catch (e) {
       if (e.pin) { Nadwa.session.del('nadwa_pin'); location.reload(); return; }
       toast(e.message, 'err');
     } finally { timer = setTimeout(load, C.REFRESH_MODERATOR_SEC * 1000); }
   }
 
-  function setTab(t) {
-    tab = t;
-    document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
-    render();
-  }
-  document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
-
-  async function act(a, id) {
-    busy = true;
-    try {
-      if (a === 'spot') {
-        await rpc('admin_spotlight', { p_pin: pin, p_event: ev.id, p_question: id });
-        ev.spotlight_id = id;
-        const q = qs.find(x => x.id === id); if (q && q.status === 'pending') q.status = 'approved';
-        toast('معروض الآن على الشاشة', 'ok');
-      } else {
-        await rpc('admin_set_status', { p_pin: pin, p_question: id, p_status: a });
-        const q = qs.find(x => x.id === id);
-        if (q) { q.status = a; if (a === 'answered') q.answered_at = new Date().toISOString(); }
-        if (['hidden', 'pending'].includes(a) && ev.spotlight_id === id) ev.spotlight_id = null;
-      }
-    } catch (e) { toast(e.message, 'err'); }
-    finally { busy = false; render(); }
-  }
-  document.addEventListener('click', e => {
-    const b = e.target.closest('[data-act]'); if (b) { b.disabled = true; act(b.dataset.act, b.dataset.q); }
-  });
-
-  $('spotClear').onclick = async () => {
-    try { await rpc('admin_spotlight', { p_pin: pin, p_event: ev.id, p_question: null }); ev.spotlight_id = null; render(); }
-    catch (e) { toast(e.message, 'err'); }
-  };
-  $('spotDone').onclick = async () => {
-    const id = ev.spotlight_id; if (!id) return;
-    await act('answered', id);
-    try { await rpc('admin_spotlight', { p_pin: pin, p_event: ev.id, p_question: null }); ev.spotlight_id = null; render(); } catch (_) {}
-  };
   $('openToggle').onchange = async e => {
     try {
       ev = await rpc('admin_save_event', { p_pin: pin, p_event: ev.id, p_data: { is_open: e.target.checked } });

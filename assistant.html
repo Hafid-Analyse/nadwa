@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مرافق المنشّط</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b1418">
+<script>try{var t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('nadwa_theme');if(t==='auto')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="icon" type="image/svg+xml" href="assets/icon-assistant.svg">
+<link rel="apple-touch-icon" href="assets/icon-assistant-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .wrap { max-width: 980px; margin: 0 auto; padding: 18px 16px 40px; }
+  .head { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem 1.2rem; margin-bottom: 1.1rem; }
+  .brandrow { display: flex; align-items: center; gap: .8rem; flex: 1; min-width: 260px; }
+  .head .logo { height: 40px; flex: none; }
+  .head h1 { font-size: 1.25rem; margin: 0; flex: 1; min-width: 0; font-weight: 800; line-height: 1.4; }
+  .head h1 small { display: block; font-size: .8rem; color: var(--muted); font-weight: 400; }
+  .controls { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+  .switch { display: inline-flex; align-items: center; gap: .5em; font-size: .9rem; font-weight: 700; cursor: pointer; }
+  .spotbar { background: var(--card); color: var(--ink); border: 1px solid var(--accent-line);
+    border-radius: 20px; padding: .9rem 1.1rem; display: flex; gap: .8rem; align-items: center; margin-bottom: 1rem; box-shadow: var(--shadow-sm); }
+  .spotbar .t { flex: 1; font-weight: 800; min-width: 0; overflow-wrap: anywhere; }
+  .sbtns { display: flex; gap: .5rem; flex: none; }
+  .spotbar small { display: block; opacity: .75; font-weight: 700; font-size: .8rem; }
+  .spotbar .btn.quiet { background: rgba(0,0,0,.15); color: var(--on-accent); border-color: rgba(0,0,0,.15); }
+  .tabs { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; position: sticky; top: 0; padding: .6rem 0; z-index: 5;
+    background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .tabs button { border: 1px solid var(--chip-line); background: var(--chip); border-radius: 99px; padding: .45em 1.05em; cursor: pointer; font-weight: 700; color: var(--chip-ink); transition: .15s; }
+  .tabs button[aria-selected=true] { background: var(--grad); color: var(--on-accent); border-color: transparent; box-shadow: 0 4px 14px var(--glow); }
+  .tabs .c { display: inline-block; min-width: 1.6em; padding: 0 .4em; border-radius: 99px; background: color-mix(in srgb, var(--ink) 12%, transparent); font-size: .8rem; margin-inline-start: .35em; text-align: center; }
+  .tabs [data-tab=pending] .c.hot { background: var(--amber); color: #2A1C15; }
+  #list { display: grid; gap: .7rem; }
+  .q .actions { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .7rem; }
+  .q .likes { flex: none; text-align: center; min-width: 58px; font-weight: 800; color: var(--accent); font-size: 1.3rem; }
+  .q .likes small { display: block; font-size: .7rem; color: var(--muted); font-weight: 400; }
+  .q.spotlit { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 6px 24px var(--glow); }
+  .empty { text-align: center; color: var(--muted); padding: 3rem 0; }
+  .links { display: flex; gap: .45rem; align-items: center; }
+  .links .theme-btn { width: 36px; height: 36px; }
+  .q .orig { margin-top: .4rem; font-size: .82rem; color: var(--muted); border-inline-start: 3px solid color-mix(in srgb, var(--amber) 55%, transparent); padding-inline-start: .6rem; }
+  .q .orig b { color: var(--amber-ink); font-weight: 700; }
+  .q .editbox textarea { min-height: 5.5em; margin-top: .2rem; }
+  .q .editbox .row { display: flex; gap: .45rem; margin-top: .55rem; flex-wrap: wrap; }
+  .q .editbox .hint { font-size: .78rem; color: var(--muted); margin-top: .35rem; }
+  .q.editing { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .q .body { min-width: 0; }
+  .q .meta span { white-space: nowrap; }
+  .q .meta .lk { display: none; color: var(--accent); font-weight: 800; background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: 99px; padding: 0 .6em; }
+
+  /* ---------- الهاتف واللوحي الصغير ---------- */
+  @media (max-width: 680px) {
+    .wrap { padding: 12px 12px 40px; }
+    .head { gap: .7rem; margin-bottom: .8rem; }
+    .brandrow { min-width: 0; flex-basis: 100%; }
+    .head .logo { height: 30px; }
+    .head h1 { font-size: 1.05rem; }
+    .controls { flex-basis: 100%; justify-content: space-between; gap: .6rem;
+      background: var(--card); border: 1px solid var(--card-line); border-radius: 16px; padding: .5rem .7rem; }
+    .switch { font-size: .85rem; }
+    .links { gap: .35rem; }
+    .links .btn.sm { min-height: 38px; padding: .3em .7em; }
+    .spotbar { flex-direction: column; align-items: stretch; padding: .8rem .9rem; border-radius: 18px; }
+    .sbtns .btn { flex: 1; min-height: 42px; }
+    .tabs { flex-wrap: nowrap; overflow-x: auto; margin-inline: -12px; padding: .5rem 12px; scrollbar-width: none; gap: .4rem; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tabs button { flex: none; white-space: nowrap; padding: .45em .85em; font-size: .9rem; }
+    .q { padding: 12px; gap: 10px; }
+    .q .likes { display: none; }
+    .q .meta .lk { display: inline-block; }
+    .q .actions { gap: .4rem; }
+    .q .actions { flex-wrap: nowrap; }
+    .q .actions .btn { flex: 1 1 0; min-width: 0; min-height: 42px; padding: .3em .35em; font-size: .84rem; white-space: nowrap; }
+    .q .actions .btn:not(.ghost):not(.quiet) { flex-grow: 1.5; }
+  }
+  @media (max-width: 420px) {
+    .links .lbl { display: none; }
+    .links .btn.sm { width: 38px; padding: 0; }
+  }
+  /* ---------- الشاشات الكبيرة ---------- */
+  @media (min-width: 1400px) {
+    .wrap { max-width: 1120px; }
+    .q .body { font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+<div class="orbs"><span class="w o1"></span><span class="d o2"></span><span class="d o4"></span></div>
+<div id="gate" hidden>
+  <form class="card">
+    <img class="logo" data-logo alt="">
+    <h1>مرافق المنشّط</h1>
+    <label class="field"><input type="password" placeholder="رمز المنشّط" autocomplete="current-password" required></label>
+    <button class="btn" style="width:100%">دخول</button>
+  </form>
+</div>
+
+<div class="wrap">
+  <div class="head">
+    <div class="brandrow">
+      <img class="logo" data-logo alt="" hidden>
+      <h1 id="title">…<small></small></h1>
+    </div>
+    <div class="controls">
+      <label class="switch"><input type="checkbox" id="openToggle"> <span>باب الأسئلة مفتوح</span></label>
+      <div class="links">
+        <span id="themeSlot"></span>
+        <a class="btn sm ghost" href="screen.html" target="_blank" title="شاشة العرض"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5l4 4 4-4"/><rect x="2.5" y="6.5" width="19" height="13" rx="2.5"/><path d="M8 22h8"/></svg><span class="lbl">شاشة العرض</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="spotbar" id="spotbar" hidden>
+    <div class="t" id="spotText"></div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button data-tab="pending" aria-selected="true">بانتظار المراجعة<span class="c">0</span></button>
+    <button data-tab="approved" aria-selected="false">المعروضة<span class="c">0</span></button>
+    <button data-tab="answered" aria-selected="false">تمت الإجابة<span class="c">0</span></button>
+    <button data-tab="hidden" aria-selected="false">المخفية<span class="c">0</span></button>
+  </div>
+  <div id="list"></div>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+(() => {
+  const { rpc, esc, applyTheme, toast, flip, adminGate, C } = Nadwa;
+  const $ = id => document.getElementById(id);
+  let pin, ev, qs = [], tab = 'pending', timer, firstLoad = true, busy = false;
+  const params = new URLSearchParams(location.search);
+
+  // المرافق: يقبل، يصحّح (قبل القبول فقط)، يُخفي — العرض على الشاشة و"تمت الإجابة" للمنشّط وحده
+  const ACTIONS = {
+    pending:  [['approved', 'قبول', ''], ['edit', 'تصحيح', 'ghost'], ['hidden', 'إخفاء', 'quiet']],
+    approved: [['hidden', 'إخفاء', 'quiet']],
+    answered: [],
+    hidden:   [['approved', 'استعادة ونشر', 'quiet'], ['pending', 'إرجاع للمراجعة', 'quiet']],
+  };
+  let editing = null;
+
+  function fmtTime(t) { try { return new Date(t).toLocaleTimeString('ar-DZ-u-nu-latn', { hour: '2-digit', minute: '2-digit' }); } catch (_) { return ''; } }
+
+  function render() {
+    const counts = { pending: 0, approved: 0, answered: 0, hidden: 0 };
+    qs.forEach(q => counts[q.status]++);
+    document.querySelectorAll('[data-tab]').forEach(b => {
+      const c = b.querySelector('.c'); c.textContent = counts[b.dataset.tab];
+      if (b.dataset.tab === 'pending') c.classList.toggle('hot', counts.pending > 0);
+    });
+    document.title = (counts.pending ? `(${counts.pending}) ` : '') + 'مرافق المنشّط';
+
+    const spot = qs.find(q => ev && q.id === ev.spotlight_id);
+    $('spotbar').hidden = !spot;
+    if (spot) $('spotText').innerHTML = esc(spot.body) + `<small>📺 معروض الآن على الشاشة (يتحكّم فيه المنشّط) · ${spot.likes} إعجاب</small>`;
+
+    let rows = qs.filter(q => q.status === tab);
+    if (tab === 'approved') rows.sort((a, b) => b.likes - a.likes);
+    else if (tab === 'answered') rows.sort((a, b) => (b.answered_at || '').localeCompare(a.answered_at || ''));
+    else rows.sort((a, b) => a.created_at.localeCompare(b.created_at));
+
+    flip($('list'), () => {
+      $('list').innerHTML = rows.length ? rows.map(q => `
+        <article class="q${ev && q.id === ev.spotlight_id ? ' spotlit' : ''}${editing === q.id ? ' editing' : ''}" data-id="${q.id}">
+          <div class="body">${editing === q.id ? `
+            <div class="editbox">
+              <textarea id="editText" maxlength="1000">${esc(q.body)}</textarea>
+              <div class="hint">بعد القبول يُقفل النص ولا يمكن تصحيحه.</div>
+              <div class="row">
+                <button class="btn sm" data-act="save" data-q="${q.id}">حفظ التصحيح</button>
+                <button class="btn sm" data-act="saveapprove" data-q="${q.id}">حفظ وقبول</button>
+                <button class="btn sm quiet" data-act="cancel" data-q="${q.id}">إلغاء</button>
+              </div>
+            </div>` : esc(q.body)}
+            <div class="meta"><span class="lk">♥ ${q.likes}</span><span>${q.author ? esc(q.author) : 'بدون اسم'}</span>${q.target ? `<span>إلى: ${esc(q.target)}</span>` : ''}<span>${fmtTime(q.created_at)}</span>${q.original_body ? '<span class="badge amber">مُصحَّح</span>' : ''}</div>
+            ${q.original_body && editing !== q.id ? `<div class="orig"><b>النص الأصلي:</b> ${esc(q.original_body)}</div>` : ''}
+            ${editing === q.id || !ACTIONS[q.status].length ? '' : `<div class="actions">${ACTIONS[q.status].map(([a, label, cls]) =>
+              `<button class="btn sm ${cls}" data-act="${a}" data-q="${q.id}">${label}</button>`).join('')}</div>`}
+          </div>
+          <div class="likes">${q.likes}<small>إعجاب</small></div>
+        </article>`).join('') : '<p class="empty">لا توجد أسئلة هنا</p>';
+    });
+  }
+
+  async function load() {
+    clearTimeout(timer);
+    try {
+      if (!ev) {
+        const evs = await rpc('admin_list_events', { p_pin: pin });
+        const want = params.get('e');
+        ev = evs.find(e => e.id === want) || evs.find(e => e.is_active) || evs[0];
+        if (!ev) { $('title').firstChild.textContent = 'لا توجد ندوة — أنشئها من الإعدادات'; return; }
+      }
+      const d = await rpc('admin_list_questions', { p_pin: pin, p_event: ev.id });
+      ev = d.event; qs = d.questions;
+      $('title').firstChild.textContent = ev.title;
+      $('title').querySelector('small').textContent = '📋 مرافق المنشّط · ' + (ev.moderation ? 'المراجعة مفعّلة: الأسئلة تنتظر قبولك' : 'المراجعة معطّلة: الأسئلة تُنشر مباشرة');
+      $('openToggle').checked = ev.is_open;
+      applyTheme(ev);
+      if (firstLoad && !ev.moderation) { setTab('approved'); }
+      firstLoad = false;
+      if (editing && !qs.some(q => q.id === editing && q.status === 'pending')) { editing = null; toast('لم يعد السؤال بانتظار المراجعة'); }
+      if (!busy && !editing) render();
+    } catch (e) {
+      if (e.pin) { Nadwa.session.del('nadwa_pin'); location.reload(); return; }
+      toast(e.message, 'err');
+    } finally { timer = setTimeout(load, C.REFRESH_MODERATOR_SEC * 1000); }
+  }
+
+  function setTab(t) {
+    tab = t; editing = null;
+    document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
+    render();
+  }
+  document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+
+  async function act(a, id) {
+    const q = qs.find(x => x.id === id);
+    if (a === 'edit') { editing = id; render(); const t = $('editText'); if (t) { t.focus(); t.setSelectionRange(t.value.length, t.value.length); } return; }
+    if (a === 'cancel') { editing = null; render(); return; }
+    busy = true;
+    try {
+      if (a === 'save' || a === 'saveapprove') {
+        const r = await rpc('admin_edit_question', { p_pin: pin, p_question: id, p_body: $('editText').value });
+        if (q) { q.body = r.body; q.original_body = r.original_body; }
+        editing = null;
+        if (a === 'saveapprove') {
+          await rpc('admin_set_status', { p_pin: pin, p_question: id, p_status: 'approved' });
+          if (q) q.status = 'approved';
+          toast('حُفظ التصحيح وقُبل السؤال', 'ok');
+        } else toast('حُفظ التصحيح', 'ok');
+      } else {
+        await rpc('admin_set_status', { p_pin: pin, p_question: id, p_status: a });
+        if (q) { q.status = a; if (a === 'answered') q.answered_at = new Date().toISOString(); }
+        if (['hidden', 'pending'].includes(a) && ev.spotlight_id === id) ev.spotlight_id = null;
+      }
+    } catch (e) { toast(e.message, 'err'); }
+    finally { busy = false; render(); }
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if (!b) return;
+    if (!['edit', 'cancel'].includes(b.dataset.act)) b.disabled = true;
+    act(b.dataset.act, b.dataset.q);
+  });
+
+  $('openToggle').onchange = async e => {
+    try {
+      ev = await rpc('admin_save_event', { p_pin: pin, p_event: ev.id, p_data: { is_open: e.target.checked } });
+      toast(ev.is_open ? 'فُتح باب الأسئلة' : 'أُغلق باب الأسئلة', 'ok');
+    } catch (err) { e.target.checked = !e.target.checked; toast(err.message, 'err'); }
+  };
+
+  $('themeSlot').appendChild(Nadwa.themeButton());
+  adminGate(p => { pin = p; load(); });
+})();
+</script>
+</body>
+</html>

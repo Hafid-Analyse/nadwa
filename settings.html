@@ -65,7 +65,8 @@
     <img class="logo" data-logo alt="" hidden>
     <h1>الإعدادات</h1>
     <span id="themeSlot"></span>
-    <a class="btn sm ghost" href="moderator.html">لوحة المنشّط</a>
+    <a class="btn sm ghost" href="assistant.html">📋 المرافق</a>
+    <a class="btn sm ghost" href="moderator.html">🎙️ المنشّط</a>
     <a class="btn sm ghost" href="screen.html" target="_blank">شاشة العرض</a>
   </div>
 
@@ -244,9 +245,9 @@
     const d = await rpc('admin_list_questions', { p_pin: pin, p_event: id });
     const fmt = t => t ? new Date(t).toLocaleString('fr-FR') : '';
     const cell = v => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
-    const rows = [['الترتيب', 'السؤال', 'الاسم', 'موجّه إلى', 'الحالة', 'الإعجابات', 'وقت الطرح', 'وقت الإجابة']];
+    const rows = [['الترتيب', 'السؤال', 'النص الأصلي (قبل التصحيح)', 'الاسم', 'موجّه إلى', 'الحالة', 'الإعجابات', 'وقت الطرح', 'وقت الإجابة']];
     d.questions.slice().sort((a, b) => b.likes - a.likes)
-      .forEach((q, i) => rows.push([i + 1, q.body, q.author, q.target, STATUS_LABEL[q.status], q.likes, fmt(q.created_at), fmt(q.answered_at)]));
+      .forEach((q, i) => rows.push([i + 1, q.body, q.original_body || '', q.author, q.target, STATUS_LABEL[q.status], q.likes, fmt(q.created_at), fmt(q.answered_at)]));
     const csv = '﻿' + rows.map(r => r.map(cell).join(',')).join('\r\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
