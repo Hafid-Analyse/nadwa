@@ -30,12 +30,10 @@
   .speakers .list { display: flex; flex-wrap: wrap; gap: 8px; }
   .spk { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 700; padding: 3px 12px 3px 4px; border-radius: 99px; background: var(--chip); border: 1px solid var(--chip-line); }
   .spk .av { width: 26px; height: 26px; font-size: 12px; }
-  /* الخطوات */
-  .steps { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .steps li { text-align: center; font-size: 12px; color: var(--muted); padding: 12px 6px 10px; border-radius: 16px; background: var(--card); border: 1px solid var(--card-line); }
-  .steps .n { display: grid; place-items: center; width: 34px; height: 34px; margin: 0 auto 6px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-line); }
-  .steps .n svg { width: 18px; height: 18px; }
-  .steps b { display: block; color: var(--ink); font-size: 13px; }
+  /* التوصية */
+  .tip { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px 0 0; padding: 11px 14px; border-radius: 16px;
+    font-weight: 700; font-size: 15px; color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-line); }
+  .tip svg { width: 18px; height: 18px; flex: none; }
   /* نموذج السؤال */
   .ask { margin-top: 14px; }
   .ask h2 { font-size: 1.12rem; margin: 0 0 .9rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
@@ -47,15 +45,9 @@
   .closed .ico svg { width: 26px; height: 26px; }
   .sent { margin-top: .9rem; padding: 12px; border-radius: 16px; font-weight: 700; text-align: center; font-size: 15px;
           background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-line); }
-  /* الإحصاءات */
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 22px; }
-  .stats div { text-align: center; padding: 10px 6px; border-radius: 16px; background: var(--card); border: 1px solid var(--card-line); }
-  .stats b { display: block; font-size: 22px; line-height: 1.2; font-weight: 800; color: var(--accent); }
-  .stats div:nth-child(2) b { color: var(--amber-ink); }
-  .stats div:nth-child(3) b { color: var(--brown-ink); }
-  .stats small { color: var(--muted); font-size: 12px; }
-  .bar { display: flex; align-items: center; gap: .5rem; margin: 14px 0 12px; }
-  .bar .seg { flex: 1; }
+  .bar { display: flex; align-items: center; gap: .5rem; margin: 22px 2px 12px; }
+  .bar .lt { flex: 1; margin: 0; font-size: 1.1rem; font-weight: 800; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .bar .lt small { font-size: .78rem; font-weight: 400; color: var(--muted); }
   .refresh { width: 50px; height: 50px; border-radius: 16px; border: 1.5px solid var(--field-line); background: var(--field); color: var(--ink2); cursor: pointer; display: grid; place-items: center; }
   .refresh svg { width: 20px; height: 20px; }
   .refresh.spin svg { animation: spin .8s linear infinite; }
@@ -78,7 +70,7 @@
   .radio-row label { padding: 7px 14px; border: 1px solid var(--chip-line); border-radius: 999px; font-size: 14px; cursor: pointer; color: var(--chip-ink); background: var(--chip); transition: .15s; }
   .radio-row input { display: none; }
   .radio-row label:has(input:checked) { background: var(--grad); color: var(--on-accent); font-weight: 700; box-shadow: 0 4px 14px var(--glow); border-color: transparent; }
-  @media (max-width: 370px) { .steps li { font-size: 11px; } .hero h1 { font-size: 22px; } }
+  @media (max-width: 370px) { .hero h1 { font-size: 22px; } }
 </style>
 </head>
 <body>
@@ -99,15 +91,11 @@
     <div class="speakers" id="speakers" hidden><span class="lbl">المحاضرون</span><div class="list" id="spkList"></div></div>
   </header>
 
-  <ol class="steps">
-    <li><span class="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></span><b>اكتب سؤالك</b>بإيجاز ووضوح</li>
-    <li><span class="n"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.4h2c.7-1.3 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21z"/></svg></span><b>أعجب بما يهمّك</b>من أسئلة غيرك</li>
-    <li><span class="n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span><b>الأكثر إعجابًا</b>يُطرح أولًا</li>
-  </ol>
+  <p class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>اكتب سؤالك بوضوح</p>
 
   <section class="card ask" id="askBox">
     <form id="askForm" hidden>
-      <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.7-.8 1.2v.4M12 16.5h.01"/></svg>اكتب سؤالك</h2>
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.7-.8 1.2v.4M12 16.5h.01"/></svg>سؤالك</h2>
       <label class="field" id="targetField" hidden>
         <span>موجّه إلى</span>
         <div class="radio-row" id="targets"></div>
@@ -130,17 +118,9 @@
     <div class="sent" id="sentBox" hidden></div>
   </section>
 
-  <div class="stats">
-    <div><b id="stQ">0</b><small>سؤالًا معروضًا</small></div>
-    <div><b id="stL">0</b><small>إعجاباتك</small></div>
-    <div><b id="stM">0</b><small>أسئلتك</small></div>
-  </div>
 
   <div class="bar">
-    <div class="seg" role="tablist">
-      <button role="tab" aria-selected="true" data-order="top">الأكثر إعجابًا</button>
-      <button role="tab" aria-selected="false" data-order="new">الأحدث</button>
-    </div>
+    <h3 class="lt">الأسئلة<small>مرتّبة حسب الإعجابات</small></h3>
     <button class="refresh" id="refreshBtn" aria-label="تحديث">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
     </button>
@@ -166,7 +146,7 @@
   const dev = deviceId();
   const params = new URLSearchParams(location.search);
   let eventId = params.get('e') || null;
-  let ev = null, order = 'top', timer = null, lastTouch = Date.now(), loading = false;
+  let ev = null; const order = 'top'; let timer = null, lastTouch = Date.now(), loading = false;
 
   const likedKey = () => 'nadwa_liked_' + (ev ? ev.id : '');
   const mineKey = () => 'nadwa_mine_' + (ev ? ev.id : '');
@@ -226,9 +206,6 @@
     });
     $('answeredTitle').hidden = data.answered.length === 0;
     $('answered').innerHTML = data.answered.map(q => card(q, liked.has(q.id), mine.has(q.id), 0, true)).join('');
-    $('stQ').textContent = data.total || 0;
-    $('stL').textContent = liked.size;
-    $('stM').textContent = mine.size;
   }
 
   async function load(manual) {
@@ -264,9 +241,10 @@
     const want = !liked.has(id);
     const num = btn.querySelector('span');
     const before = +num.textContent;
-    want ? liked.add(id) : liked.delete(id); saveSet(likedKey(), liked); $('stL').textContent = liked.size;
+    want ? liked.add(id) : liked.delete(id); saveSet(likedKey(), liked);
     document.querySelectorAll(`[data-like="${id}"]`).forEach(b => {
       b.classList.toggle('on', want); b.setAttribute('aria-pressed', want);
+      if (want) { b.classList.remove('burst'); void b.offsetWidth; b.classList.add('burst'); b.addEventListener('animationend', () => b.classList.remove('burst'), { once: true }); }
       b.querySelector('span').textContent = Math.max(0, before + (want ? 1 : -1));
     });
     try {
@@ -313,12 +291,6 @@
     finally { $('sendBtn').disabled = false; }
   });
 
-  // التبويبات
-  document.querySelectorAll('[data-order]').forEach(b => b.addEventListener('click', () => {
-    order = b.dataset.order;
-    document.querySelectorAll('[data-order]').forEach(x => x.setAttribute('aria-selected', x === b));
-    load(false);
-  }));
   $('refreshBtn').addEventListener('click', () => load(true));
   $('resume').addEventListener('click', () => { lastTouch = Date.now(); load(true); });
 

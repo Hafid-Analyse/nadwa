@@ -21,6 +21,7 @@
   --amber: #F7A64B; --brown: #BB642F; --flame: #EE2B0D;
   --amber-ink: #F7A64B; --brown-ink: #d98a5c; --flame-ink: #ff7a5c;
   --danger: #ff6b55;
+  --heart: #E8452F;          /* أحمر الاستقامة */
   --font: 'Cairo', system-ui, sans-serif;
   color-scheme: dark;
 }
@@ -39,6 +40,7 @@
   --orb-w1: #fde7cc; --orb-w2: #f7c992; --orb-d1: #d8efe9; --orb-d2: #b9e2d8;
   --amber-ink: #b86a12; --brown-ink: #9a4a22; --flame-ink: #c8260b;
   --danger: #c8260b;
+  --heart: #D9432F;
   color-scheme: light;
 }
 
@@ -174,14 +176,31 @@ textarea { resize: vertical; min-height: 6.5em; }
 .av { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 11px; font-weight: 800;
       background: color-mix(in srgb, var(--brown) 22%, transparent); color: var(--brown-ink); flex: none; }
 .like {
-  flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
   min-width: 58px; min-height: 58px; border-radius: 16px; border: 1.5px solid var(--field-line);
-  background: var(--field); cursor: pointer; font-weight: 800; color: var(--muted); padding: .2em; transition: .15s;
+  background: var(--field); cursor: pointer; font-weight: 800; color: var(--muted); padding: .2em; transition: background .2s, border-color .2s;
+  -webkit-tap-highlight-color: transparent;
 }
-.like svg { width: 22px; height: 22px; }
-.like.on { background: var(--grad); border-color: transparent; color: var(--on-accent); box-shadow: 0 4px 14px var(--glow); }
-.like.on svg { animation: pop .35s ease; }
-.like:active { transform: scale(.92); }
+/* القلب: أحمر مفرّغ قبل الإعجاب، ممتلئ بعده */
+.like svg { width: 24px; height: 24px; color: var(--heart); overflow: visible; }
+.like svg path { fill: transparent; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; transition: fill .2s; }
+.like.on { background: color-mix(in srgb, var(--heart) 12%, var(--field)); border-color: color-mix(in srgb, var(--heart) 45%, transparent); color: var(--heart); }
+.like.on svg path { fill: currentColor; }
+/* عند الضغط فقط: نبضة حمراء مع توهّج عنبري */
+.like.burst { animation: heart-glow .8s ease-out; }
+.like.burst svg { animation: heart-beat .7s cubic-bezier(.2,.9,.3,1.4); }
+@keyframes heart-beat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.4); filter: drop-shadow(0 0 6px var(--amber)); }
+  45% { transform: scale(.9); }
+  65% { transform: scale(1.15); filter: drop-shadow(0 0 4px var(--amber)); }
+  100% { transform: scale(1); filter: none; }
+}
+@keyframes heart-glow {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--amber) 70%, transparent); }
+  100% { box-shadow: 0 0 0 16px color-mix(in srgb, var(--amber) 0%, transparent); }
+}
+.like:active { transform: scale(.94); }
 .meter { position: absolute; bottom: 0; inset-inline-start: 0; height: 3px; border-radius: 3px; background: var(--grad); opacity: .7; transition: width .5s; }
 .q.r1 { border-color: color-mix(in srgb, var(--amber) 45%, transparent); }
 .q.r1::before, .q.r2::before, .q.r3::before { content: ''; position: absolute; inset-block: 12px; inset-inline-start: 0; width: 4px; border-radius: 0 4px 4px 0; }
@@ -206,3 +225,9 @@ textarea { resize: vertical; min-height: 6.5em; }
 /* ---------- تذييل ---------- */
 .foot { position: relative; z-index: 1; text-align: center; color: var(--muted); font-size: 12px; padding: 28px 16px 36px; }
 .foot img { height: 30px; display: block; margin: 0 auto 8px; opacity: .9; }
+
+/* ---------- الشاشات الصغيرة: إخفاء الدوائر الكبيرة التي تغطي العناصر ---------- */
+@media (max-width: 680px), (max-height: 520px) {
+  .orbs .o1, .orbs .o3 { display: none; }
+  .orbs .o2, .orbs .o4 { opacity: .35; }
+}
