@@ -45,6 +45,25 @@
   #qr img, #qr canvas { width: 160px; height: 160px; display: block; }
   .link { direction: ltr; text-align: left; font-family: ui-monospace, monospace; font-size: .85rem; background: var(--field); border: 1.5px solid var(--field-line); padding: .65em .85em; border-radius: 12px; overflow-wrap: anywhere; margin-bottom: .7rem; }
   .btns { display: flex; gap: .5rem; flex-wrap: wrap; }
+  /* نافذة الروابط */
+  .modal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 14px;
+    background: rgba(3,8,10,.62); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+  :root[data-theme="light"] .modal { background: rgba(20,40,44,.35); }
+  .sheet { width: 100%; max-width: 640px; max-height: 92vh; overflow: auto; background: var(--card-solid); border: 1px solid var(--card-line);
+    border-top: 3px solid var(--amber); border-radius: 24px; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.45); }
+  .sheet .top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+  .sheet .top h3 { flex: 1; margin: 0; font-size: 1.1rem; font-weight: 800; line-height: 1.5; }
+  .sheet .top h3 small { display: block; font-size: .8rem; color: var(--amber-ink); font-weight: 700; }
+  .lq { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; padding: 14px; border-radius: 18px; background: var(--field); border: 1.5px solid var(--field-line); }
+  @media (max-width: 560px) { .lq { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
+  .lq .qrbox { background: #fff; padding: 8px; border-radius: 14px; }
+  .lq .qrbox canvas { width: 150px; height: 150px; display: block; }
+  .lq p { margin: 0 0 .6rem; font-size: .88rem; color: var(--muted); }
+  .links-list { display: grid; gap: 8px; margin-top: 14px; }
+  .lrow { display: grid; grid-template-columns: 1fr auto auto; gap: 6px; align-items: center; padding: 8px 10px; border-radius: 14px; background: var(--field); border: 1px solid var(--field-line); }
+  .lrow b { display: block; font-size: .88rem; }
+  .lrow code { display: block; direction: ltr; text-align: left; font-size: .72rem; color: var(--muted); overflow-wrap: anywhere; }
+  .lrow .btn.sm { min-height: 34px; }
   .savebar { position: sticky; bottom: 0; padding: .9rem 0; display: flex; gap: .5rem; z-index: 5;
     background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--card-line); }
 </style>
@@ -134,7 +153,7 @@
           <button class="btn sm" id="copyLink">نسخ الرابط</button>
           <button class="btn sm ghost" id="dlQr">تحميل رمز QR</button>
         </div>
-        <p class="muted" style="font-size:.85rem">هذا الرابط ثابت لكل الندوات: يفتح دائمًا الندوة النشطة، فيمكنك طباعة الرمز مرة واحدة.</p>
+        <p class="muted" style="font-size:.85rem">هذا الرابط العام يفتح دائمًا <b>الندوة النشطة</b>. إن كانت لديك ندوتان في الوقت نفسه، فاستعمل زر <b>🔗 الروابط و QR</b> بجانب كل ندوة: لكل واحدة رابطها ورمزها الخاص.</p>
       </div>
     </div>
   </section>
@@ -148,6 +167,8 @@
     </form>
   </section>
 </div>
+
+<div class="modal" id="linksModal" hidden><div class="sheet" id="linksSheet" role="dialog" aria-modal="true"></div></div>
 
 <script src="lib/qrcode.js"></script>
 <script src="config.js"></script>
@@ -171,6 +192,7 @@
           <small>${e.event_date ? formatDate(e.event_date) + ' · ' : ''}${e.count} سؤالًا</small></div>
         ${e.is_active ? '<span class="badge">نشطة</span>' : `<button class="btn sm ghost" data-activate="${e.id}">تفعيل</button>`}
         <button class="btn sm quiet" data-sel="${e.id}">تعديل</button>
+        <button class="btn sm" data-links="${e.id}">🔗 الروابط و QR</button>
         <button class="btn sm quiet" data-export="${e.id}">تصدير</button>
         ${e.is_active ? '' : `<button class="btn sm quiet" data-del="${e.id}" title="حذف">حذف</button>`}
       </div>`).join('') || '<p class="muted">لا توجد ندوات بعد.</p>';
@@ -225,7 +247,8 @@
   };
 
   document.addEventListener('click', async e => {
-    const t = e.target.closest('[data-sel],[data-activate],[data-export],[data-del]'); if (!t) return;
+    const t = e.target.closest('[data-sel],[data-activate],[data-export],[data-del],[data-links]'); if (!t) return;
+    if (t.dataset.links) return openLinks(t.dataset.links);
     try {
       if (t.dataset.sel) { selId = t.dataset.sel; renderEvents(); fillForm(); $('form').scrollIntoView({ behavior: 'smooth' }); }
       if (t.dataset.activate) { await rpc('admin_set_active', { p_pin: pin, p_event: t.dataset.activate }); toast('أصبحت هذه الندوة نشطة', 'ok'); await loadEvents(); }
@@ -264,6 +287,76 @@
       pin = $('newPin').value; session.set('nadwa_pin', pin); e.target.reset(); toast('تم تغيير الرمز ✓', 'ok');
     } catch (err) { toast(err.message, 'err'); }
   });
+
+  // ---------- روابط ورمز QR خاص بكل ندوة (لندوات متزامنة) ----------
+  const PAGES = [
+    ['', '❓ الحاضرون (يُطبع في رمز QR)'],
+    ['screen.html', '📺 شاشة العرض'],
+    ['assistant.html', '📋 مرافق المنشّط'],
+    ['moderator.html', '🎙️ المنشّط'],
+  ];
+  const base = new URL('./', location.href).href;
+  const linkFor = (page, id) => base + page + '?e=' + id;
+  function copy(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => toast('نُسخ الرابط', 'ok'), () => toast(text));
+    else toast(text);
+  }
+  function openLinks(id) {
+    const ev = events.find(x => x.id === id); if (!ev) return;
+    const att = linkFor('', id);
+    $('linksSheet').innerHTML = `
+      <div class="top">
+        <h3><small>الروابط ورمز QR الخاص بهذه الندوة</small>${esc(ev.title)}</h3>
+        <button class="btn sm quiet" data-close>إغلاق</button>
+      </div>
+      <div class="lq">
+        <div class="qrbox" id="evQr"></div>
+        <div>
+          <p>هذا الرمز يفتح <b>هذه الندوة فقط</b>، سواء كانت نشطة أم لا. اطبعه لقاعتها، وشاشة العرض بالرابط أدناه تعرضه تلقائيًا.</p>
+          <button class="btn sm" data-dlqr>⬇️ تحميل QR للطباعة</button>
+        </div>
+      </div>
+      <div class="links-list">${PAGES.map(([p, label]) => `
+        <div class="lrow">
+          <div><b>${label}</b><code>${esc(linkFor(p, id))}</code></div>
+          <button class="btn sm ghost" data-copy="${esc(linkFor(p, id))}">نسخ</button>
+          <a class="btn sm quiet" href="${esc(linkFor(p, id))}" target="_blank">فتح</a>
+        </div>`).join('')}
+      </div>`;
+    drawQr($('evQr'), att, 600);
+    $('linksModal').hidden = false;
+    $('linksSheet').onclick = async ev2 => {
+      if (ev2.target.closest('[data-close]')) return ($('linksModal').hidden = true);
+      const c = ev2.target.closest('[data-copy]'); if (c) return copy(c.dataset.copy);
+      if (ev2.target.closest('[data-dlqr]')) await downloadPrintQr(ev, att);
+    };
+  }
+  $('linksModal').addEventListener('click', e => { if (e.target === $('linksModal')) $('linksModal').hidden = true; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') $('linksModal').hidden = true; });
+
+  // صورة جاهزة للطباعة: عنوان الندوة + الرمز + عبارة قصيرة، حتى لا تختلط أوراق القاعتين
+  async function downloadPrintQr(ev, url) {
+    try { await document.fonts.load('800 40px Cairo'); await document.fonts.load('400 26px Cairo'); } catch (_) {}
+    const W = 1200, pad = 80, qrSize = 820;
+    const tmp = document.createElement('div'); const q = drawQr(tmp, url, qrSize);
+    const c = document.createElement('canvas'); const g = c.getContext('2d');
+    g.font = '800 54px Cairo, sans-serif';
+    const words = ev.title.split(/\s+/), lines = []; let line = '';
+    words.forEach(w => { const t = line ? line + ' ' + w : w; if (g.measureText(t).width > W - pad * 2 && line) { lines.push(line); line = w; } else line = t; });
+    if (line) lines.push(line);
+    const titleH = Math.min(lines.length, 3) * 74;
+    c.width = W; c.height = pad + titleH + 40 + qrSize + 130;
+    g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+    g.direction = 'rtl'; g.textAlign = 'center'; g.fillStyle = '#0b1418'; g.font = '800 54px Cairo, sans-serif';
+    lines.slice(0, 3).forEach((l, i) => g.fillText(l, W / 2, pad + 54 + i * 74));
+    g.imageSmoothingEnabled = false;   // حواف حادة: الرمز يُرسم بحجمه الأصلي دون تكبير ضبابي
+    g.drawImage(q, Math.round((W - q.width) / 2), pad + titleH + 30 + Math.round((qrSize - q.height) / 2));
+    g.font = '700 40px Cairo, sans-serif'; g.fillStyle = '#0c9e85';
+    g.fillText('امسح الرمز لطرح سؤالك', W / 2, pad + titleH + 30 + qrSize + 70);
+    const a = document.createElement('a'); a.href = c.toDataURL('image/png');
+    a.download = ('QR - ' + ev.title).replace(/[\\/:*?"<>|]/g, '-').slice(0, 80) + '.png'; a.click();
+    toast('حُمّل رمز QR', 'ok');
+  }
 
   // الرابط ورمز QR
   const url = attendeeUrl();
